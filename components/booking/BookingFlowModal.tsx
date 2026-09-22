@@ -204,7 +204,7 @@ export function BookingFlowModal({
         {/* Header Modal Bar */}
         <div className="flex items-center justify-between border-b border-[#E8E2D2] bg-white px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="font-serif text-lg font-bold text-[#1A1A1A]">
+            <span className=" text-lg font-bold text-[#1A1A1A]">
               {currentStep === 6
                 ? "Reservation Dispatched"
                 : "Commission Photographer"}
@@ -275,7 +275,7 @@ export function BookingFlowModal({
           {currentStep === 1 && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
+                <h3 className=" text-lg font-bold text-[#1A1A1A]">
                   Select a Commission Tier
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -298,7 +298,7 @@ export function BookingFlowModal({
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-serif text-base font-bold text-[#1A1A1A]">
+                          <h4 className=" text-base font-bold text-[#1A1A1A]">
                             {pkg.name}
                           </h4>
                           {pkg.is_popular && (
@@ -311,7 +311,7 @@ export function BookingFlowModal({
                       </div>
 
                       <div className="text-right">
-                        <div className="font-serif text-lg font-bold text-[#1A1A1A]">
+                        <div className=" text-lg font-bold text-[#1A1A1A]">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </div>
                         <div className="text-[10px] text-[#767471]">
@@ -376,7 +376,7 @@ export function BookingFlowModal({
               return (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
+                    <h3 className=" text-lg font-bold text-[#1A1A1A]">
                       Select Your Event Date
                     </h3>
                     <p className="text-xs text-[#767471]">
@@ -389,7 +389,7 @@ export function BookingFlowModal({
                   <div className="rounded-2xl border border-[#E8E2D2] bg-white p-4 shadow-xs">
                     {/* Calendar Month Nav Header */}
                     <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#F0ECE1]">
-                      <div className="font-serif text-sm font-bold text-[#1A1A1A]">
+                      <div className=" text-sm font-bold text-[#1A1A1A]">
                         {stepMonthName} {stepCalYear}
                       </div>
                       <div className="flex items-center gap-1">
@@ -495,7 +495,7 @@ export function BookingFlowModal({
           {currentStep === 3 && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
+                <h3 className=" text-lg font-bold text-[#1A1A1A]">
                   Preferred Shooting Window
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -562,7 +562,7 @@ export function BookingFlowModal({
           {currentStep === 4 && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
+                <h3 className=" text-lg font-bold text-[#1A1A1A]">
                   Event Parameters & Venue
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -647,7 +647,7 @@ export function BookingFlowModal({
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                   Final Confirmation
                 </span>
-                <h3 className="font-serif text-xl font-bold text-[#1A1A1A]">
+                <h3 className=" text-xl font-bold text-[#1A1A1A]">
                   Summary of Request
                 </h3>
               </div>
@@ -660,7 +660,7 @@ export function BookingFlowModal({
                   className="h-12 w-12 rounded-xl object-cover ring-1 ring-[#C59B27]"
                 />
                 <div>
-                  <h4 className="font-serif text-sm font-bold text-[#1A1A1A]">
+                  <h4 className=" text-sm font-bold text-[#1A1A1A]">
                     {photographer.business_name}
                   </h4>
                   <p className="text-xs text-[#767471]">
@@ -676,7 +676,7 @@ export function BookingFlowModal({
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">
                       Selected Tier
                     </span>
-                    <h4 className="font-serif text-base font-bold text-[#1A1A1A]">
+                    <h4 className=" text-base font-bold text-[#1A1A1A]">
                       {selectedPackage.name}
                     </h4>
                     <p className="text-xs text-[#52504E]">
@@ -684,7 +684,7 @@ export function BookingFlowModal({
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="font-serif text-lg font-bold text-[#1A1A1A]">
+                    <div className=" text-lg font-bold text-[#1A1A1A]">
                       ₹{selectedPackage.price.toLocaleString("en-IN")}
                     </div>
                     <div className="text-[10px] text-[#767471]">
@@ -783,7 +783,7 @@ export function BookingFlowModal({
                   <div>
                     <div className="flex items-center gap-2">
                       <Lock className="h-4 w-4 text-[#C59B27]" />
-                      <h4 className="font-serif text-sm font-bold text-[#1A1A1A]">
+                      <h4 className=" text-sm font-bold text-[#1A1A1A]">
                         Patron Account Information
                       </h4>
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-900">
@@ -869,7 +869,7 @@ export function BookingFlowModal({
                 <span className="rounded-full bg-[#C59B27]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#997316]">
                   Reservation Dispatched
                 </span>
-                <h3 className="mt-2 font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+                <h3 className="mt-2  text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
                   Booking Request Sent!
                 </h3>
                 <p className="mt-1 text-xs text-[#767471]">
@@ -884,14 +884,14 @@ export function BookingFlowModal({
               <div className="rounded-2xl border border-[#E8E2D2] bg-white p-5 text-left shadow-xs">
                 <div className="flex justify-between items-center pb-3 border-b border-[#F0ECE1]">
                   <div>
-                    <div className="font-serif text-sm font-bold text-[#1A1A1A]">
+                    <div className=" text-sm font-bold text-[#1A1A1A]">
                       {createdBooking.photographer_name}
                     </div>
                     <div className="text-xs text-[#767471]">
                       {createdBooking.package_name}
                     </div>
                   </div>
-                  <div className="text-right font-serif text-base font-bold text-[#1A1A1A]">
+                  <div className="text-right  text-base font-bold text-[#1A1A1A]">
                     ₹{createdBooking.total_price.toLocaleString("en-IN")}
                   </div>
                 </div>

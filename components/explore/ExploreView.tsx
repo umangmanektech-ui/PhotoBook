@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { useApp } from '@/lib/store/app-context';
-import { DateRangePicker } from '@/components/common/DateRangePicker';
+import { DateRangePicker } from "@/components/common/DateRangePicker";
+import { useApp } from "@/lib/store/app-context";
 import {
-  Search,
-  SlidersHorizontal,
-  MapPin,
-  Star,
-  ShieldCheck,
-  Heart,
   ArrowRight,
-  X,
-  ChevronDown,
+  Calendar,
+  Heart,
+  MapPin,
+  Search,
+  ShieldCheck,
+  SlidersHorizontal,
   Sparkles,
-  Calendar
-} from 'lucide-react';
+  Star,
+  X,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface ExploreViewProps {
   initialCategory?: string;
@@ -23,41 +22,64 @@ interface ExploreViewProps {
 }
 
 export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
-  const { photographers, isPhotographerSaved, toggleSavePhotographer, bookings } = useApp();
+  const {
+    photographers,
+    isPhotographerSaved,
+    toggleSavePhotographer,
+    bookings,
+  } = useApp();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'All');
-  const [selectedCity, setSelectedCity] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory || "All",
+  );
+  const [selectedCity, setSelectedCity] = useState<string>("All");
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
   const [maxPrice, setMaxPrice] = useState<number>(40000);
   const [minRating, setMinRating] = useState<number>(4.0);
   const [availableThisWeek, setAvailableThisWeek] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'price_asc' | 'price_desc'>('recommended');
+  const [sortBy, setSortBy] = useState<
+    "recommended" | "rating" | "price_asc" | "price_desc"
+  >("recommended");
   const [showFilterModal, setShowFilterModal] = useState(false);
 
   // Active filter count
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (selectedCategory !== 'All') count++;
-    if (selectedCity !== 'All') count++;
+    if (selectedCategory !== "All") count++;
+    if (selectedCity !== "All") count++;
     if (startDate || endDate) count++;
     if (maxPrice < 40000) count++;
     if (minRating > 4.0) count++;
     if (availableThisWeek) count++;
     return count;
-  }, [selectedCategory, selectedCity, startDate, endDate, maxPrice, minRating, availableThisWeek]);
+  }, [
+    selectedCategory,
+    selectedCity,
+    startDate,
+    endDate,
+    maxPrice,
+    minRating,
+    availableThisWeek,
+  ]);
 
   // Filtered & Sorted Photographers
   const filteredPhotographers = useMemo(() => {
     return photographers
       .filter((artist) => {
         // Category filter
-        if (selectedCategory !== 'All' && !artist.categories.includes(selectedCategory)) {
+        if (
+          selectedCategory !== "All" &&
+          !artist.categories.includes(selectedCategory)
+        ) {
           return false;
         }
         // City filter
-        if (selectedCity !== 'All' && !artist.city.toLowerCase().includes(selectedCity.toLowerCase())) {
+        if (
+          selectedCity !== "All" &&
+          !artist.city.toLowerCase().includes(selectedCity.toLowerCase())
+        ) {
           return false;
         }
         // Search query
@@ -65,7 +87,9 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
           const q = searchQuery.toLowerCase();
           const matchName = artist.business_name.toLowerCase().includes(q);
           const matchCity = artist.city.toLowerCase().includes(q);
-          const matchTags = artist.categories.some((c) => c.toLowerCase().includes(q));
+          const matchTags = artist.categories.some((c) =>
+            c.toLowerCase().includes(q),
+          );
           if (!matchName && !matchCity && !matchTags) return false;
         }
         // Date range filter
@@ -80,7 +104,10 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
           if (isBlackedOut) return false;
 
           const hasConflict = bookings.some((b) => {
-            if (b.photographer_id === artist.id && (b.status === 'confirmed' || b.status === 'pending')) {
+            if (
+              b.photographer_id === artist.id &&
+              (b.status === "confirmed" || b.status === "pending")
+            ) {
               if (endDate) {
                 return b.event_date >= startDate && b.event_date <= endDate;
               }
@@ -102,17 +129,36 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'rating') return b.rating - a.rating;
-        if (sortBy === 'price_asc') return a.starting_price - b.starting_price;
-        if (sortBy === 'price_desc') return b.starting_price - a.starting_price;
+        if (sortBy === "rating") return b.rating - a.rating;
+        if (sortBy === "price_asc") return a.starting_price - b.starting_price;
+        if (sortBy === "price_desc") return b.starting_price - a.starting_price;
         // Recommended
         if (a.is_featured && !b.is_featured) return -1;
         if (!a.is_featured && b.is_featured) return 1;
         return b.review_count - a.review_count;
       });
-  }, [photographers, selectedCategory, selectedCity, searchQuery, startDate, endDate, maxPrice, minRating, sortBy, bookings]);
+  }, [
+    photographers,
+    selectedCategory,
+    selectedCity,
+    searchQuery,
+    startDate,
+    endDate,
+    maxPrice,
+    minRating,
+    sortBy,
+    bookings,
+  ]);
 
-  const categoriesList = ['All', 'Wedding', 'Pre-Wedding', 'Portrait', 'Event', 'Fashion & Editorial', 'Maternity'];
+  const categoriesList = [
+    "All",
+    "Wedding",
+    "Pre-Wedding",
+    "Portrait",
+    "Event",
+    "Fashion & Editorial",
+    "Maternity",
+  ];
 
   return (
     <div className="min-h-screen pb-24 text-[#1A1A1A]">
@@ -121,11 +167,12 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="font-serif text-2xl font-bold tracking-tight text-[#1A1A1A] sm:text-3xl">
+              <h1 className=" text-2xl font-bold tracking-tight text-[#1A1A1A] sm:text-3xl">
                 Browse Master Photographers
               </h1>
               <p className="mt-1 text-xs text-[#767471]">
-                Curated directory of verified visual artists with transparent commission tiers and verified diaries.
+                Curated directory of verified visual artists with transparent
+                commission tiers and verified diaries.
               </p>
             </div>
 
@@ -142,7 +189,7 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                 />
                 {searchQuery && (
                   <button
-                    onClick={() => setSearchQuery('')}
+                    onClick={() => setSearchQuery("")}
                     className="absolute right-2.5 top-2.5 text-[#767471] hover:text-[#1A1A1A]"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -189,8 +236,8 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                 onClick={() => setSelectedCategory(cat)}
                 className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${
                   selectedCategory === cat
-                    ? 'bg-[#1A1A1A] text-[#FBF9F5] shadow-xs'
-                    : 'bg-[#F0ECE1]/70 text-[#52504E] border border-[#E8E2D2] hover:border-[#C59B27]'
+                    ? "bg-[#1A1A1A] text-[#FBF9F5] shadow-xs"
+                    : "bg-[#F0ECE1]/70 text-[#52504E] border border-[#E8E2D2] hover:border-[#C59B27]"
                 }`}
               >
                 {cat}
@@ -201,20 +248,24 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
           {/* Quick Filter Bar */}
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#F0ECE1]">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-semibold text-[#767471]">City:</span>
-              {['All', 'Ahmedabad', 'Jaipur', 'Udaipur', 'Mumbai'].map((city) => (
-                <button
-                  key={city}
-                  onClick={() => setSelectedCity(city)}
-                  className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium transition ${
-                    selectedCity === city
-                      ? 'bg-[#1A1A1A] text-white'
-                      : 'bg-[#F0ECE1] text-[#52504E] hover:bg-[#E8E2D2]'
-                  }`}
-                >
-                  {city}
-                </button>
-              ))}
+              <span className="text-[11px] font-semibold text-[#767471]">
+                City:
+              </span>
+              {["All", "Ahmedabad", "Jaipur", "Udaipur", "Mumbai"].map(
+                (city) => (
+                  <button
+                    key={city}
+                    onClick={() => setSelectedCity(city)}
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium transition ${
+                      selectedCity === city
+                        ? "bg-[#1A1A1A] text-white"
+                        : "bg-[#F0ECE1] text-[#52504E] hover:bg-[#E8E2D2]"
+                    }`}
+                  >
+                    {city}
+                  </button>
+                ),
+              )}
 
               {(startDate || endDate) && (
                 <div className="inline-flex items-center gap-1 rounded-full bg-[#C59B27]/15 border border-[#C59B27]/40 px-2.5 py-0.5 text-[11px] font-bold text-[#997316]">
@@ -235,8 +286,8 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
               {activeFilterCount > 0 && (
                 <button
                   onClick={() => {
-                    setSelectedCategory('All');
-                    setSelectedCity('All');
+                    setSelectedCategory("All");
+                    setSelectedCity("All");
                     setStartDate(undefined);
                     setEndDate(undefined);
                     setMaxPrice(40000);
@@ -271,20 +322,27 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
       {/* Main Grid of Photographers */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-4 text-xs text-[#767471]">
-          Displaying <span className="font-semibold text-[#1A1A1A]">{filteredPhotographers.length}</span> verified photographers
+          Displaying{" "}
+          <span className="font-semibold text-[#1A1A1A]">
+            {filteredPhotographers.length}
+          </span>{" "}
+          verified photographers
         </div>
 
         {filteredPhotographers.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#D9D2C2] bg-white py-16 text-center">
             <Sparkles className="mx-auto h-8 w-8 text-[#C59B27]" />
-            <h3 className="mt-3 font-serif text-base font-bold text-[#1A1A1A]">No Photographers Found</h3>
+            <h3 className="mt-3  text-base font-bold text-[#1A1A1A]">
+              No Photographers Found
+            </h3>
             <p className="mt-1 text-xs text-[#767471] max-w-sm mx-auto">
-              No visual artist matches your current filter selection or date availability. Try clearing or expanding your search dates.
+              No visual artist matches your current filter selection or date
+              availability. Try clearing or expanding your search dates.
             </p>
             <button
               onClick={() => {
-                setSelectedCategory('All');
-                setSelectedCity('All');
+                setSelectedCategory("All");
+                setSelectedCity("All");
                 setStartDate(undefined);
                 setEndDate(undefined);
                 setMaxPrice(40000);
@@ -308,7 +366,7 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                     {/* 3-Image Preview Strip */}
                     <div className="grid grid-cols-3 gap-1 bg-[#F0ECE1]/30 p-2">
                       <div
-                        onClick={() => onNavigate('detail', artist.id)}
+                        onClick={() => onNavigate("detail", artist.id)}
                         className="col-span-2 h-44 overflow-hidden rounded-l-2xl relative cursor-pointer"
                       >
                         <img
@@ -318,12 +376,14 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                         />
                         <div className="absolute top-2 left-2">
                           <span className="rounded-full bg-[#1A1A1A]/80 backdrop-blur-xs px-2.5 py-0.5 text-[9px] font-bold text-white">
-                            {artist.shoots_completed > 0 ? `${artist.shoots_completed}+ Shoots` : 'New Master'}
+                            {artist.shoots_completed > 0
+                              ? `${artist.shoots_completed}+ Shoots`
+                              : "New Master"}
                           </span>
                         </div>
                       </div>
                       <div
-                        onClick={() => onNavigate('detail', artist.id)}
+                        onClick={() => onNavigate("detail", artist.id)}
                         className="grid grid-rows-2 gap-1 h-44 cursor-pointer"
                       >
                         <div className="overflow-hidden rounded-tr-2xl">
@@ -346,9 +406,12 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                     {/* Body Info */}
                     <div className="p-5">
                       <div className="flex items-start justify-between">
-                        <div className="cursor-pointer" onClick={() => onNavigate('detail', artist.id)}>
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => onNavigate("detail", artist.id)}
+                        >
                           <div className="flex items-center gap-1.5">
-                            <h3 className="font-serif text-base font-bold text-[#1A1A1A] group-hover:text-[#997316] transition">
+                            <h3 className=" text-base font-bold text-[#1A1A1A] group-hover:text-[#997316] transition">
                               {artist.business_name}
                             </h3>
                             {artist.is_verified && (
@@ -357,7 +420,9 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                           </div>
                           <div className="mt-0.5 flex items-center gap-1 text-xs text-[#767471]">
                             <MapPin className="h-3 w-3 text-[#C59B27]" />
-                            <span>{artist.city}, {artist.state}</span>
+                            <span>
+                              {artist.city}, {artist.state}
+                            </span>
                           </div>
                         </div>
 
@@ -366,12 +431,14 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                           onClick={() => toggleSavePhotographer(artist.id)}
                           className={`rounded-full p-2 transition ${
                             isSaved
-                              ? 'bg-rose-50 text-rose-600'
-                              : 'bg-[#FBF9F5] text-[#767471] hover:text-rose-500 hover:bg-rose-50'
+                              ? "bg-rose-50 text-rose-600"
+                              : "bg-[#FBF9F5] text-[#767471] hover:text-rose-500 hover:bg-rose-50"
                           }`}
                           aria-label="Save photographer"
                         >
-                          <Heart className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+                          <Heart
+                            className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`}
+                          />
                         </button>
                       </div>
 
@@ -411,12 +478,12 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                         Starting Session
                       </span>
                       <div className="text-sm font-bold text-[#1A1A1A]">
-                        ₹{artist.starting_price.toLocaleString('en-IN')}
+                        ₹{artist.starting_price.toLocaleString("en-IN")}
                       </div>
                     </div>
 
                     <button
-                      onClick={() => onNavigate('detail', artist.id)}
+                      onClick={() => onNavigate("detail", artist.id)}
                       className="flex items-center gap-1.5 rounded-xl bg-[#1A1A1A] px-4 py-2 text-xs font-semibold text-[#FBF9F5] transition hover:bg-[#333] group-hover:border-[#C59B27]"
                     >
                       <span>View Atelier</span>
@@ -435,7 +502,7 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
           <div className="w-full max-w-lg rounded-3xl border border-[#D9D2C2] bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-[#F0ECE1] pb-4">
-              <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
+              <h3 className=" text-lg font-bold text-[#1A1A1A]">
                 Refine Search Parameters
               </h3>
               <button
@@ -449,7 +516,9 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
             <div className="mt-4 space-y-5 text-xs">
               {/* Category */}
               <div>
-                <label className="block text-xs font-bold text-[#1A1A1A] mb-2">Photography Genre</label>
+                <label className="block text-xs font-bold text-[#1A1A1A] mb-2">
+                  Photography Genre
+                </label>
                 <div className="flex flex-wrap gap-1.5">
                   {categoriesList.map((cat) => (
                     <button
@@ -457,8 +526,8 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                       onClick={() => setSelectedCategory(cat)}
                       className={`rounded-lg px-3 py-1.5 font-medium transition ${
                         selectedCategory === cat
-                          ? 'bg-[#1A1A1A] text-white'
-                          : 'bg-[#F0ECE1] text-[#52504E]'
+                          ? "bg-[#1A1A1A] text-white"
+                          : "bg-[#F0ECE1] text-[#52504E]"
                       }`}
                     >
                       {cat}
@@ -470,8 +539,12 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
               {/* Price slider */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-bold text-[#1A1A1A]">Max Session Budget</label>
-                  <span className="font-bold text-[#C59B27]">₹{maxPrice.toLocaleString('en-IN')}</span>
+                  <label className="text-xs font-bold text-[#1A1A1A]">
+                    Max Session Budget
+                  </label>
+                  <span className="font-bold text-[#C59B27]">
+                    ₹{maxPrice.toLocaleString("en-IN")}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -486,7 +559,9 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
 
               {/* Min Rating */}
               <div>
-                <label className="block text-xs font-bold text-[#1A1A1A] mb-2">Minimum Client Rating</label>
+                <label className="block text-xs font-bold text-[#1A1A1A] mb-2">
+                  Minimum Client Rating
+                </label>
                 <div className="flex gap-2">
                   {[4.0, 4.5, 4.8, 4.9].map((r) => (
                     <button
@@ -494,8 +569,8 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
                       onClick={() => setMinRating(r)}
                       className={`flex items-center gap-1 rounded-lg px-3 py-1.5 font-medium transition ${
                         minRating === r
-                          ? 'bg-[#1A1A1A] text-white'
-                          : 'bg-[#F0ECE1] text-[#52504E]'
+                          ? "bg-[#1A1A1A] text-white"
+                          : "bg-[#F0ECE1] text-[#52504E]"
                       }`}
                     >
                       <Star className="h-3 w-3 fill-current" />
@@ -510,8 +585,8 @@ export function ExploreView({ initialCategory, onNavigate }: ExploreViewProps) {
             <div className="mt-6 flex items-center justify-between border-t border-[#F0ECE1] pt-4">
               <button
                 onClick={() => {
-                  setSelectedCategory('All');
-                  setSelectedCity('All');
+                  setSelectedCategory("All");
+                  setSelectedCity("All");
                   setStartDate(undefined);
                   setEndDate(undefined);
                   setMaxPrice(40000);

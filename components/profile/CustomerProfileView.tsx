@@ -1,22 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useApp } from '@/lib/store/app-context';
+import { useApp } from "@/lib/store/app-context";
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Camera,
-  Calendar,
-  Heart,
-  ShieldCheck,
-  Check,
-  Save,
-  LogOut,
   ArrowRight,
-  Sparkles
-} from 'lucide-react';
+  Calendar,
+  Camera,
+  Check,
+  Heart,
+  LogOut,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  ShieldCheck,
+  User,
+} from "lucide-react";
+import React, { useState } from "react";
 
 interface CustomerProfileViewProps {
   onNavigate: (tab: string) => void;
@@ -32,17 +31,17 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
     logoutUser,
   } = useApp();
 
-  const [fullName, setFullName] = useState(currentUser.full_name || '');
-  const [email, setEmail] = useState(currentUser.email || '');
-  const [phone, setPhone] = useState(currentUser.phone || '');
-  const [city, setCity] = useState(currentUser.city || 'Ahmedabad');
-  const [avatarUrl, setAvatarUrl] = useState(currentUser.avatar_url || '');
+  const [fullName, setFullName] = useState(currentUser.full_name || "");
+  const [email, setEmail] = useState(currentUser.email || "");
+  const [phone, setPhone] = useState(currentUser.phone || "");
+  const [city, setCity] = useState(currentUser.city || "Ahmedabad");
+  const [avatarUrl, setAvatarUrl] = useState(currentUser.avatar_url || "");
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const myBookings = bookings.filter((b) => b.customer_id === currentUser.id);
   const activeBookingsCount = myBookings.filter(
-    (b) => b.status === 'confirmed' || b.status === 'pending'
+    (b) => b.status === "confirmed" || b.status === "pending",
   ).length;
 
   const handleSave = (e: React.FormEvent) => {
@@ -76,15 +75,15 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-serif text-2xl font-bold text-[#1A1A1A]">
-                  {currentUser.full_name || 'Client Account'}
+                <h1 className=" text-2xl font-bold text-[#1A1A1A]">
+                  {currentUser.full_name || "Client Account"}
                 </h1>
                 <span className="rounded-full bg-[#C59B27]/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#997316]">
                   Verified Patron
                 </span>
               </div>
               <p className="text-xs text-[#767471] mt-0.5">
-                {currentUser.email} • {currentUser.city || 'Ahmedabad'}
+                {currentUser.email} • {currentUser.city || "Ahmedabad"}
               </p>
             </div>
           </div>
@@ -93,8 +92,8 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
             <button
               type="button"
               onClick={() => {
-                switchUserRole('photographer');
-                onNavigate('studio');
+                switchUserRole("photographer");
+                onNavigate("studio");
               }}
               className="flex items-center gap-1.5 rounded-xl border border-[#C59B27] bg-[#FDFBF7] px-3.5 py-2 text-xs font-bold text-[#997316] hover:bg-[#F0ECE1] transition shadow-xs"
             >
@@ -105,7 +104,7 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
               type="button"
               onClick={() => {
                 logoutUser();
-                onNavigate('auth');
+                onNavigate("auth");
               }}
               className="flex items-center gap-1.5 rounded-xl border border-[#E8E2D2] px-3 py-2 text-xs font-semibold text-[#767471] hover:bg-red-50 hover:text-red-700 transition"
             >
@@ -119,36 +118,48 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-[#F0ECE1]">
           <button
             type="button"
-            onClick={() => onNavigate('bookings')}
+            onClick={() => onNavigate("bookings")}
             className="flex items-center justify-between rounded-2xl bg-[#FBF9F5] border border-[#E8E2D2] p-3 text-left hover:border-[#C59B27] transition"
           >
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">Active Bookings</div>
-              <div className="text-lg font-bold text-[#1A1A1A]">{activeBookingsCount}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">
+                Active Bookings
+              </div>
+              <div className="text-lg font-bold text-[#1A1A1A]">
+                {activeBookingsCount}
+              </div>
             </div>
             <Calendar className="h-5 w-5 text-[#C59B27]" />
           </button>
 
           <button
             type="button"
-            onClick={() => onNavigate('saved')}
+            onClick={() => onNavigate("saved")}
             className="flex items-center justify-between rounded-2xl bg-[#FBF9F5] border border-[#E8E2D2] p-3 text-left hover:border-[#C59B27] transition"
           >
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">Saved Artists</div>
-              <div className="text-lg font-bold text-[#1A1A1A]">{savedPhotographerIds.length}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">
+                Saved Artists
+              </div>
+              <div className="text-lg font-bold text-[#1A1A1A]">
+                {savedPhotographerIds.length}
+              </div>
             </div>
             <Heart className="h-5 w-5 text-rose-500" />
           </button>
 
           <button
             type="button"
-            onClick={() => onNavigate('explore')}
+            onClick={() => onNavigate("explore")}
             className="col-span-2 sm:col-span-1 flex items-center justify-between rounded-2xl bg-[#1A1A1A] text-white p-3 text-left hover:bg-[#333] transition shadow-xs"
           >
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[#C59B27]">Explore Catalog</div>
-              <div className="text-xs font-bold text-white mt-0.5">Find Photographers</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#C59B27]">
+                Explore Catalog
+              </div>
+              <div className="text-xs font-bold text-white mt-0.5">
+                Find Photographers
+              </div>
             </div>
             <ArrowRight className="h-5 w-5 text-[#C59B27]" />
           </button>
@@ -159,8 +170,13 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
       <div className="rounded-3xl border border-[#D9D2C2] bg-white p-6 sm:p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="font-serif text-xl font-bold text-[#1A1A1A]">Manage Profile Information</h2>
-            <p className="text-xs text-[#767471] mt-0.5">Keep your contact information current for seamless photographer coordination.</p>
+            <h2 className=" text-xl font-bold text-[#1A1A1A]">
+              Manage Profile Information
+            </h2>
+            <p className="text-xs text-[#767471] mt-0.5">
+              Keep your contact information current for seamless photographer
+              coordination.
+            </p>
           </div>
           {savedSuccess && (
             <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 animate-in fade-in">
@@ -173,7 +189,9 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
         <form onSubmit={handleSave} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">Full Name</label>
+              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">
+                Full Name
+              </label>
               <div className="relative">
                 <User className="absolute left-3.5 top-3 h-4 w-4 text-[#767471]" />
                 <input
@@ -187,7 +205,9 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">Email Address</label>
+              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-3 h-4 w-4 text-[#767471]" />
                 <input
@@ -201,7 +221,9 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">Phone Number</label>
+              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">
+                Phone Number
+              </label>
               <div className="relative">
                 <Phone className="absolute left-3.5 top-3 h-4 w-4 text-[#767471]" />
                 <input
@@ -215,7 +237,9 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">City / Location</label>
+              <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">
+                City / Location
+              </label>
               <div className="relative">
                 <MapPin className="absolute left-3.5 top-3 h-4 w-4 text-[#767471]" />
                 <input
@@ -230,7 +254,9 @@ export function CustomerProfileView({ onNavigate }: CustomerProfileViewProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">Avatar Image URL</label>
+            <label className="block text-xs font-bold text-[#1A1A1A] mb-1.5">
+              Avatar Image URL
+            </label>
             <input
               type="url"
               value={avatarUrl}

@@ -157,9 +157,7 @@ export function PhotographerDetailView({
   if (!photographer) {
     return (
       <div className="mx-auto max-w-4xl p-12 text-center">
-        <h2 className="font-serif text-xl font-bold">
-          Photographer Profile Unavailable
-        </h2>
+        <h2 className=" text-xl font-bold">Photographer Profile Unavailable</h2>
         <button
           onClick={onBack}
           className="mt-4 rounded-xl bg-[#1A1A1A] px-4 py-2 text-xs text-white"
@@ -171,7 +169,7 @@ export function PhotographerDetailView({
   }
 
   return (
-    <div className="min-h-screen pb-32 text-[#1A1A1A]">
+    <div className="min-h-screen pb-40 sm:pb-32 text-[#1A1A1A]">
       {/* Top Nav Bar */}
       <div className="sticky top-16 z-30 flex items-center justify-between border-b border-[#E8E2D2] bg-[#FBF9F5]/90 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
@@ -256,7 +254,7 @@ export function PhotographerDetailView({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    <h1 className=" text-2xl sm:text-3xl font-bold text-white tracking-tight">
                       {photographer.business_name}
                     </h1>
                     {photographer.is_verified && (
@@ -302,7 +300,7 @@ export function PhotographerDetailView({
 
           {/* Artist Bio & Technical Specifications */}
           <div className="p-6 sm:p-8">
-            <blockquote className="border-l-2 border-[#C59B27] pl-4 font-serif text-sm sm:text-base italic leading-relaxed text-[#1A1A1A]">
+            <blockquote className="border-l-2 border-[#C59B27] pl-4  text-sm sm:text-base italic leading-relaxed text-[#1A1A1A]">
               &ldquo;{photographer.bio}&rdquo;
             </blockquote>
 
@@ -359,7 +357,7 @@ export function PhotographerDetailView({
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                 Curated Catalog
               </div>
-              <h2 className="font-serif text-2xl font-bold text-[#1A1A1A]">
+              <h2 className=" text-2xl font-bold text-[#1A1A1A]">
                 Selected Works ({photogPortfolio.length} Frames)
               </h2>
             </div>
@@ -402,7 +400,7 @@ export function PhotographerDetailView({
                     <span className="rounded-full bg-[#C59B27]/20 border border-[#C59B27]/40 px-2 py-0.5 text-[9px] font-semibold text-[#F4E8C1] uppercase tracking-wider">
                       {work.category}
                     </span>
-                    <h3 className="mt-1 font-serif text-sm font-bold leading-tight">
+                    <h3 className="mt-1  text-sm font-bold leading-tight">
                       {work.title}
                     </h3>
                     {work.caption && (
@@ -430,7 +428,7 @@ export function PhotographerDetailView({
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                 Live Diary
               </div>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1A1A]">
+              <h2 className=" text-xl sm:text-2xl font-bold text-[#1A1A1A]">
                 {monthName} {calYear} Availability
               </h2>
               <p className="text-xs text-[#767471]">
@@ -567,7 +565,7 @@ export function PhotographerDetailView({
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               Transparent Pricing
             </span>
-            <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+            <h2 className="mt-1  text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
               Curated Collections
             </h2>
             <p className="mt-1.5 text-xs text-[#767471]">
@@ -596,12 +594,12 @@ export function PhotographerDetailView({
                   <div className="text-[11px] font-semibold text-[#767471] uppercase tracking-wider">
                     {pkg.tagline}
                   </div>
-                  <h3 className="mt-1 font-serif text-2xl font-bold text-[#1A1A1A]">
+                  <h3 className="mt-1  text-2xl font-bold text-[#1A1A1A]">
                     {pkg.name}
                   </h3>
 
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="font-serif text-3xl font-bold text-[#1A1A1A]">
+                    <span className=" text-3xl font-bold text-[#1A1A1A]">
                       ₹{pkg.price.toLocaleString("en-IN")}
                     </span>
                     <span className="text-xs text-[#767471]">all incl.</span>
@@ -660,7 +658,7 @@ export function PhotographerDetailView({
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               Patron Reviews
             </span>
-            <h2 className="mt-1 font-serif text-2xl font-bold text-[#1A1A1A]">
+            <h2 className="mt-1  text-2xl font-bold text-[#1A1A1A]">
               Voices of Trust ({photographer.review_count})
             </h2>
           </div>
@@ -669,7 +667,7 @@ export function PhotographerDetailView({
             {/* Rating Scores Column */}
             <div className="lg:col-span-4 rounded-3xl border border-[#D9D2C2] bg-white p-6 shadow-sm">
               <div className="text-center pb-6 border-b border-[#F0ECE1]">
-                <div className="font-serif text-4xl font-bold text-[#1A1A1A]">
+                <div className=" text-4xl font-bold text-[#1A1A1A]">
                   {photographer.rating}
                 </div>
                 <div className="flex justify-center gap-1 mt-1 text-[#C59B27]">
@@ -763,13 +761,13 @@ export function PhotographerDetailView({
         </section>
       </div>
 
-      {/* Sticky Mobile Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between border-t border-[#E8E2D2] bg-white/95 px-6 py-3.5 backdrop-blur-md sm:hidden">
+      {/* Sticky Mobile Bottom Bar — sits above the global BottomNav (bottom-16) */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 flex items-center justify-between border-t border-[#E8E2D2] bg-white/95 px-6 py-3.5 backdrop-blur-md sm:hidden">
         <div>
           <span className="text-[10px] text-[#767471] uppercase block">
             Starting from
           </span>
-          <span className="font-serif text-base font-bold text-[#1A1A1A]">
+          <span className=" text-base font-bold text-[#1A1A1A]">
             ₹{photographer.starting_price.toLocaleString("en-IN")}
           </span>
         </div>

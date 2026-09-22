@@ -46,14 +46,14 @@ export function HomeView({ onNavigate }: HomeViewProps) {
   return (
     <div className="min-h-screen pb-24 text-[#1A1A1A]">
       {/* 1. Hero Section matching Image 2 */}
-      <section className="relative overflow-hidden border-b border-[#E8E2D2] bg-gradient-to-b from-[#F0ECE1]/50 to-[#FBF9F5] px-4 pt-10 pb-12 sm:px-6 sm:pt-14 sm:pb-16 lg:px-8">
+      <section className="relative border-b border-[#E8E2D2] bg-gradient-to-b from-[#F0ECE1]/50 to-[#FBF9F5] px-4 pt-10 pb-12 sm:px-6 sm:pt-14 sm:pb-16 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#C59B27]/40 bg-[#F0ECE1] px-3.5 py-1 text-[11px] font-semibold tracking-wider text-[#997316] uppercase shadow-xs">
             <Sparkles className="h-3 w-3 text-[#C59B27]" />
             Curated Masters • India
           </div>
 
-          <h1 className="mt-4 font-serif text-3xl font-bold tracking-tight text-[#1A1A1A] sm:text-5xl sm:leading-[1.15] lg:text-6xl">
+          <h1 className="mt-4  text-3xl font-bold tracking-tight text-[#1A1A1A] sm:text-5xl sm:leading-[1.15] lg:text-6xl">
             Capture moments that last forever.
           </h1>
 
@@ -145,7 +145,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="font-serif text-xl font-bold tracking-tight text-[#1A1A1A] sm:text-2xl">
+            <h2 className=" text-xl font-bold tracking-tight text-[#1A1A1A] sm:text-2xl">
               Popular Categories
             </h2>
             <p className="text-xs text-[#767471]">
@@ -175,7 +175,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                  <h3 className="font-serif text-sm font-semibold tracking-tight leading-snug">
+                  <h3 className=" text-sm font-semibold tracking-tight leading-snug">
                     {cat.name}
                   </h3>
                   <p className="text-[10px] text-[#F0ECE1]/90">
@@ -206,7 +206,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
 
                 <div className="mt-3.5 flex items-start justify-between">
                   <div>
-                    <h3 className="font-serif text-2xl font-bold text-[#1A1A1A]">
+                    <h3 className=" text-2xl font-bold text-[#1A1A1A]">
                       {featuredPhotographer.business_name}
                     </h3>
                     <p className="flex items-center gap-1.5 mt-1 text-xs text-[#767471]">
@@ -266,7 +266,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                   <div className="text-[10px] uppercase font-bold tracking-wider text-[#767471]">
                     Starting from
                   </div>
-                  <div className="font-serif text-lg font-bold text-[#1A1A1A]">
+                  <div className=" text-lg font-bold text-[#1A1A1A]">
                     ₹
                     {featuredPhotographer.starting_price.toLocaleString(
                       "en-IN",
@@ -333,7 +333,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="font-serif text-xl font-bold tracking-tight text-[#1A1A1A] sm:text-2xl">
+            <h2 className=" text-xl font-bold tracking-tight text-[#1A1A1A] sm:text-2xl">
               Popular Near You
             </h2>
             <p className="text-xs text-[#767471]">
@@ -386,7 +386,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
               <div className="p-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-serif text-base font-bold text-[#1A1A1A] group-hover:text-[#997316] transition">
+                    <h3 className=" text-base font-bold text-[#1A1A1A] group-hover:text-[#997316] transition">
                       {artist.business_name}
                     </h3>
                     <p className="flex items-center gap-1 text-[11px] text-[#767471] mt-0.5">
@@ -441,7 +441,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               The Protocol
             </span>
-            <h2 className="mt-1 font-serif text-2xl font-bold text-[#1A1A1A]">
+            <h2 className="mt-1  text-2xl font-bold text-[#1A1A1A]">
               How PhotoBook Works
             </h2>
             <p className="mt-1.5 text-xs text-[#767471]">
@@ -452,10 +452,8 @@ export function HomeView({ onNavigate }: HomeViewProps) {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="rounded-2xl border border-[#E8E2D2] bg-white p-6 shadow-xs">
-              <div className="font-serif text-3xl font-bold text-[#C59B27]/40">
-                01
-              </div>
-              <h3 className="mt-2 font-serif text-base font-bold text-[#1A1A1A]">
+              <div className=" text-3xl font-bold text-[#C59B27]/40">01</div>
+              <h3 className="mt-2  text-base font-bold text-[#1A1A1A]">
                 Discover Masters
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-[#52504E]">
@@ -465,10 +463,8 @@ export function HomeView({ onNavigate }: HomeViewProps) {
             </div>
 
             <div className="rounded-2xl border border-[#E8E2D2] bg-white p-6 shadow-xs">
-              <div className="font-serif text-3xl font-bold text-[#C59B27]/40">
-                02
-              </div>
-              <h3 className="mt-2 font-serif text-base font-bold text-[#1A1A1A]">
+              <div className=" text-3xl font-bold text-[#C59B27]/40">02</div>
+              <h3 className="mt-2  text-base font-bold text-[#1A1A1A]">
                 Transparent Packages
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-[#52504E]">
@@ -478,10 +474,8 @@ export function HomeView({ onNavigate }: HomeViewProps) {
             </div>
 
             <div className="rounded-2xl border border-[#E8E2D2] bg-white p-6 shadow-xs">
-              <div className="font-serif text-3xl font-bold text-[#C59B27]/40">
-                03
-              </div>
-              <h3 className="mt-2 font-serif text-base font-bold text-[#1A1A1A]">
+              <div className=" text-3xl font-bold text-[#C59B27]/40">03</div>
+              <h3 className="mt-2  text-base font-bold text-[#1A1A1A]">
                 Direct Reservation
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-[#52504E]">
@@ -497,10 +491,8 @@ export function HomeView({ onNavigate }: HomeViewProps) {
       {/* 6. Patron Testimonial Quote Card */}
       <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <div className="relative rounded-3xl border border-[#C59B27]/30 bg-white p-8 shadow-lg text-center">
-          <div className="font-serif text-4xl text-[#C59B27] leading-none mb-3">
-            “
-          </div>
-          <p className="font-serif text-base italic leading-relaxed text-[#1A1A1A] sm:text-lg">
+          <div className=" text-4xl text-[#C59B27] leading-none mb-3">“</div>
+          <p className=" text-base italic leading-relaxed text-[#1A1A1A] sm:text-lg">
             Booking our Udaipur wedding photographer through PhotoBook felt like
             curating an exhibition. Arjun blended seamlessly into our rituals
             and delivered frames that made our entire family weep with joy.
@@ -532,7 +524,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
             <span className="rounded-full bg-[#C59B27]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               Studio Portal Pro
             </span>
-            <h2 className="mt-3 font-serif text-2xl font-bold sm:text-4xl text-white">
+            <h2 className="mt-3  text-2xl font-bold sm:text-4xl text-white">
               Turn your photography into opportunities.
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-[#A6A4A0] leading-relaxed">
@@ -547,6 +539,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                   switchUserRole("photographer");
                   onNavigate("studio");
                 }}
+                disabled
                 className="flex items-center gap-2 rounded-xl bg-[#C59B27] px-5 py-3 text-xs font-semibold text-[#1A1A1A] transition hover:bg-[#D4AF37]"
               >
                 <span>Enter Studio Portal Pro</span>

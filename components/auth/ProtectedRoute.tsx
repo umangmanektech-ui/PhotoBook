@@ -1,22 +1,31 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useApp } from '@/lib/store/app-context';
-import { ShieldCheck, Lock, Sparkles, User, Camera, ArrowRight, LogIn, UserPlus } from 'lucide-react';
-import { UserRole } from '@/lib/types';
+import { useApp } from "@/lib/store/app-context";
+import {
+  ArrowRight,
+  Camera,
+  Lock,
+  LogIn,
+  ShieldCheck,
+  UserPlus,
+} from "lucide-react";
+import React from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: ('customer' | 'photographer')[];
+  allowedRoles?: ("customer" | "photographer")[];
   fallbackTitle?: string;
   fallbackDescription?: string;
   onNavigate: (tab: string, param?: string) => void;
-  onOpenAuth?: (initialMode?: 'login' | 'register', initialRole?: 'customer' | 'photographer') => void;
+  onOpenAuth?: (
+    initialMode?: "login" | "register",
+    initialRole?: "customer" | "photographer",
+  ) => void;
 }
 
 export function ProtectedRoute({
   children,
-  allowedRoles = ['customer', 'photographer'],
+  allowedRoles = ["customer", "photographer"],
   fallbackTitle,
   fallbackDescription,
   onNavigate,
@@ -24,7 +33,10 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { currentUser, switchUserRole } = useApp();
 
-  const isGuest = currentUser.id === 'user-guest' || !currentUser.email || currentUser.email === 'guest@photobook.app';
+  const isGuest =
+    currentUser.id === "user-guest" ||
+    !currentUser.email ||
+    currentUser.email === "guest@photobook.app";
   const hasAllowedRole = allowedRoles.includes(currentUser.role as any);
 
   // If user is authenticated and has required role, render protected child view
@@ -33,7 +45,11 @@ export function ProtectedRoute({
   }
 
   // 1. Case: Photographer-only protected route accessed by a customer or guest
-  if (allowedRoles.length === 1 && allowedRoles[0] === 'photographer' && currentUser.role !== 'photographer') {
+  if (
+    allowedRoles.length === 1 &&
+    allowedRoles[0] === "photographer" &&
+    currentUser.role !== "photographer"
+  ) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg rounded-3xl border border-[#D9D2C2] bg-white p-8 sm:p-10 shadow-lg text-center">
@@ -46,22 +62,22 @@ export function ProtectedRoute({
             Studio Access Restricted
           </div>
 
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
-            {fallbackTitle || 'Photographer Portal Only'}
+          <h2 className=" text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+            {fallbackTitle || "Photographer Portal Only"}
           </h2>
 
           <p className="mt-2 text-xs sm:text-sm text-[#767471] leading-relaxed max-w-md mx-auto">
             {fallbackDescription ||
-              'This studio workspace, portfolio editor, pricing tiers, and inquiry calendar are reserved exclusively for registered photographer pros.'}
+              "This studio workspace, portfolio editor, pricing tiers, and inquiry calendar are reserved exclusively for registered photographer pros."}
           </p>
 
           <div className="mt-8 space-y-3">
             <button
               onClick={() => {
                 if (onOpenAuth) {
-                  onOpenAuth('login', 'photographer');
+                  onOpenAuth("login", "photographer");
                 } else {
-                  onNavigate('auth', 'photographer');
+                  onNavigate("auth", "photographer");
                 }
               }}
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1A1A1A] px-6 py-3.5 text-xs font-bold text-white shadow-xs hover:bg-[#333] transition"
@@ -74,9 +90,9 @@ export function ProtectedRoute({
             <button
               onClick={() => {
                 if (onOpenAuth) {
-                  onOpenAuth('register', 'photographer');
+                  onOpenAuth("register", "photographer");
                 } else {
-                  onNavigate('register', 'photographer');
+                  onNavigate("register", "photographer");
                 }
               }}
               className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#D9D2C2] bg-[#FBF9F5] px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:bg-white transition"
@@ -87,7 +103,7 @@ export function ProtectedRoute({
 
             <div className="pt-3">
               <button
-                onClick={() => switchUserRole('photographer')}
+                onClick={() => switchUserRole("photographer")}
                 className="text-[11px] font-semibold text-[#767471] hover:text-[#C59B27] underline"
               >
                 Or instant demo switch to Photographer Pro profile
@@ -112,22 +128,22 @@ export function ProtectedRoute({
           Protected Route
         </div>
 
-        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
-          {fallbackTitle || 'Authentication Required'}
+        <h2 className=" text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+          {fallbackTitle || "Authentication Required"}
         </h2>
 
         <p className="mt-2 text-xs sm:text-sm text-[#767471] leading-relaxed max-w-md mx-auto">
           {fallbackDescription ||
-            'Please sign in or create an account to view and manage your reservations, curated shortlists, and private patron settings.'}
+            "Please sign in or create an account to view and manage your reservations, curated shortlists, and private patron settings."}
         </p>
 
         <div className="mt-8 space-y-3">
           <button
             onClick={() => {
               if (onOpenAuth) {
-                onOpenAuth('login', 'customer');
+                onOpenAuth("login", "customer");
               } else {
-                onNavigate('auth', 'customer');
+                onNavigate("auth", "customer");
               }
             }}
             className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1A1A1A] px-6 py-3.5 text-xs font-bold text-white shadow-xs hover:bg-[#333] transition"
@@ -140,9 +156,9 @@ export function ProtectedRoute({
           <button
             onClick={() => {
               if (onOpenAuth) {
-                onOpenAuth('register', 'customer');
+                onOpenAuth("register", "customer");
               } else {
-                onNavigate('register', 'customer');
+                onNavigate("register", "customer");
               }
             }}
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#D9D2C2] bg-[#FBF9F5] px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:bg-white transition"
@@ -153,7 +169,7 @@ export function ProtectedRoute({
 
           <div className="pt-3">
             <button
-              onClick={() => onNavigate('home')}
+              onClick={() => onNavigate("home")}
               className="text-[11px] font-semibold text-[#767471] hover:text-[#1A1A1A]"
             >
               Return to Public Gallery & Directory

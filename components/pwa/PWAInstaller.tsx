@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, useSyncExternalStore } from 'react';
-import { Download, X, Share, PlusSquare, WifiOff } from 'lucide-react';
+import { Download, PlusSquare, Share, WifiOff, X } from "lucide-react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 function subscribeToOnline(onStoreChange: () => void) {
-  window.addEventListener('online', onStoreChange);
-  window.addEventListener('offline', onStoreChange);
+  window.addEventListener("online", onStoreChange);
+  window.addEventListener("offline", onStoreChange);
   return () => {
-    window.removeEventListener('online', onStoreChange);
-    window.removeEventListener('offline', onStoreChange);
+    window.removeEventListener("online", onStoreChange);
+    window.removeEventListener("offline", onStoreChange);
   };
 }
 
@@ -33,8 +33,9 @@ function getIOSSnapshot() {
   const userAgent = window.navigator.userAgent.toLowerCase();
   const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
   const isInStandaloneMode =
-    window.matchMedia('(display-mode: standalone)').matches ||
-    ('standalone' in window.navigator && (window.navigator as unknown as { standalone: boolean }).standalone);
+    window.matchMedia("(display-mode: standalone)").matches ||
+    ("standalone" in window.navigator &&
+      (window.navigator as unknown as { standalone: boolean }).standalone);
   return Boolean(isIosDevice && !isInStandaloneMode);
 }
 
@@ -43,20 +44,29 @@ function getServerIOSSnapshot() {
 }
 
 export function PWAInstaller() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  const isOffline = useSyncExternalStore(subscribeToOnline, getOnlineSnapshot, getServerOnlineSnapshot);
-  const isIOS = useSyncExternalStore(subscribeNoop, getIOSSnapshot, getServerIOSSnapshot);
+  const isOffline = useSyncExternalStore(
+    subscribeToOnline,
+    getOnlineSnapshot,
+    getServerOnlineSnapshot,
+  );
+  const isIOS = useSyncExternalStore(
+    subscribeNoop,
+    getIOSSnapshot,
+    getServerIOSSnapshot,
+  );
 
   useEffect(() => {
     // Register Service Worker
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
       navigator.serviceWorker
-        .register('/sw.js')
-        .catch((err) => console.error('SW registration error:', err));
+        .register("/sw.js")
+        .catch((err) => console.error("SW registration error:", err));
     }
 
     // BeforeInstallPrompt
@@ -66,10 +76,10 @@ export function PWAInstaller() {
       setIsInstallable(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
     };
   }, []);
 
@@ -77,7 +87,7 @@ export function PWAInstaller() {
     if (deferredPrompt) {
       await deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
+      if (choice.outcome === "accepted") {
         setIsInstallable(false);
       }
       setDeferredPrompt(null);
@@ -92,7 +102,10 @@ export function PWAInstaller() {
       {isOffline && (
         <div className="fixed top-16 left-0 right-0 z-50 flex items-center justify-center gap-2 bg-[#767471] px-4 py-1.5 text-xs text-white">
           <WifiOff className="h-3.5 w-3.5" />
-          <span>You are browsing PhotoBook in offline mode. Cached portfolios are accessible.</span>
+          <span>
+            You are browsing PhotoBook in offline mode. Cached portfolios are
+            accessible.
+          </span>
         </div>
       )}
 
@@ -105,9 +118,12 @@ export function PWAInstaller() {
                 <Download className="h-5 w-5 text-[#C59B27]" />
               </div>
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#C59B27]">Install PhotoBook App</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#C59B27]">
+                  Install PhotoBook App
+                </h4>
                 <p className="text-[11px] text-[#A6A4A0] leading-snug mt-0.5">
-                  Instant booking alerts, offline gallery viewing & fluid mobile experience.
+                  Instant booking alerts, offline gallery viewing & fluid mobile
+                  experience.
                 </p>
               </div>
             </div>
@@ -142,25 +158,37 @@ export function PWAInstaller() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
           <div className="w-full max-w-sm rounded-3xl border border-[#D9D2C2] bg-[#FBF9F5] p-6 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">Install on iOS</h3>
+              <h3 className=" text-lg font-bold text-[#1A1A1A]">
+                Install on iOS
+              </h3>
               <button onClick={() => setShowIOSPrompt(false)}>
                 <X className="h-5 w-5 text-[#767471]" />
               </button>
             </div>
             <p className="mt-2 text-xs text-[#52504E] leading-relaxed">
-              Install PhotoBook directly to your iPhone / iPad Home Screen for quick access:
+              Install PhotoBook directly to your iPhone / iPad Home Screen for
+              quick access:
             </p>
             <ol className="mt-4 space-y-3 text-xs text-[#1A1A1A]">
               <li className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">1</span>
-                Tap the <Share className="mx-1 h-4 w-4 text-[#C59B27] inline" /> <strong>Share</strong> button in Safari toolbar.
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">
+                  1
+                </span>
+                Tap the <Share className="mx-1 h-4 w-4 text-[#C59B27] inline" />{" "}
+                <strong>Share</strong> button in Safari toolbar.
               </li>
               <li className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">2</span>
-                Scroll down and tap <PlusSquare className="mx-1 h-4 w-4 text-[#C59B27] inline" /> <strong>Add to Home Screen</strong>.
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">
+                  2
+                </span>
+                Scroll down and tap{" "}
+                <PlusSquare className="mx-1 h-4 w-4 text-[#C59B27] inline" />{" "}
+                <strong>Add to Home Screen</strong>.
               </li>
               <li className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">3</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8E2D2] font-semibold text-[10px]">
+                  3
+                </span>
                 Tap <strong>Add</strong> in the top-right corner.
               </li>
             </ol>

@@ -1,17 +1,19 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useApp } from '@/lib/store/app-context';
-import { Heart, Star, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { useApp } from "@/lib/store/app-context";
+import { ArrowRight, Heart, MapPin, Star } from "lucide-react";
 
 interface SavedViewProps {
   onNavigate: (tab: string, param?: string) => void;
 }
 
 export function SavedView({ onNavigate }: SavedViewProps) {
-  const { savedPhotographerIds, photographers, toggleSavePhotographer } = useApp();
+  const { savedPhotographerIds, photographers, toggleSavePhotographer } =
+    useApp();
 
-  const savedArtists = photographers.filter((p) => savedPhotographerIds.includes(p.id));
+  const savedArtists = photographers.filter((p) =>
+    savedPhotographerIds.includes(p.id),
+  );
 
   return (
     <div className="min-h-screen pb-24 text-[#1A1A1A]">
@@ -20,11 +22,12 @@ export function SavedView({ onNavigate }: SavedViewProps) {
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
             Shortlisted Curations
           </span>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#1A1A1A] sm:text-3xl">
+          <h1 className="mt-1  text-2xl font-bold tracking-tight text-[#1A1A1A] sm:text-3xl">
             Saved Visual Artists ({savedArtists.length})
           </h1>
           <p className="mt-1 text-xs text-[#767471]">
-            Your private shortlist of photographers for upcoming weddings, milestones, and personal portraits.
+            Your private shortlist of photographers for upcoming weddings,
+            milestones, and personal portraits.
           </p>
         </div>
       </div>
@@ -33,12 +36,15 @@ export function SavedView({ onNavigate }: SavedViewProps) {
         {savedArtists.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#D9D2C2] bg-white p-12 text-center">
             <Heart className="mx-auto h-8 w-8 text-[#C59B27]" />
-            <h3 className="mt-3 font-serif text-lg font-bold text-[#1A1A1A]">No Shortlisted Artists</h3>
+            <h3 className="mt-3  text-lg font-bold text-[#1A1A1A]">
+              No Shortlisted Artists
+            </h3>
             <p className="mt-1 text-xs text-[#767471]">
-              Tap the heart icon on any photographer&apos;s card or profile to save them here for quick booking.
+              Tap the heart icon on any photographer&apos;s card or profile to
+              save them here for quick booking.
             </p>
             <button
-              onClick={() => onNavigate('explore')}
+              onClick={() => onNavigate("explore")}
               className="mt-4 rounded-xl bg-[#1A1A1A] px-5 py-2.5 text-xs font-semibold text-white shadow-xs"
             >
               Browse Curated Directory
@@ -60,8 +66,8 @@ export function SavedView({ onNavigate }: SavedViewProps) {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-[#1A1A1A] font-serif text-2xl font-bold text-[#C59B27]">
-                        {artist.business_name?.charAt(0) || 'P'}
+                      <div className="flex h-full w-full items-center justify-center bg-[#1A1A1A]  text-2xl font-bold text-[#C59B27]">
+                        {artist.business_name?.charAt(0) || "P"}
                       </div>
                     )}
                     <button
@@ -76,7 +82,7 @@ export function SavedView({ onNavigate }: SavedViewProps) {
                   <div className="p-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-serif text-base font-bold text-[#1A1A1A]">
+                        <h3 className=" text-base font-bold text-[#1A1A1A]">
                           {artist.business_name}
                         </h3>
                         <p className="flex items-center gap-1 text-[11px] text-[#767471] mt-0.5">
@@ -106,14 +112,18 @@ export function SavedView({ onNavigate }: SavedViewProps) {
                 <div className="p-4 pt-0">
                   <div className="border-t border-[#F0ECE1] pt-3 flex items-center justify-between">
                     <div>
-                      <div className="text-[10px] uppercase text-[#767471]">Starting from</div>
-                      <div className="font-serif text-sm font-bold text-[#1A1A1A]">
-                        ₹{artist.starting_price.toLocaleString('en-IN')}
+                      <div className="text-[10px] uppercase text-[#767471]">
+                        Starting from
+                      </div>
+                      <div className=" text-sm font-bold text-[#1A1A1A]">
+                        ₹{artist.starting_price.toLocaleString("en-IN")}
                       </div>
                     </div>
 
                     <button
-                      onClick={() => onNavigate('photographer-detail', artist.id)}
+                      onClick={() =>
+                        onNavigate("photographer-detail", artist.id)
+                      }
                       className="flex items-center gap-1.5 rounded-xl bg-[#1A1A1A] px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[#333]"
                     >
                       <span>View Profile</span>

@@ -1,17 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Check, Clock, AlertCircle } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface InteractiveCalendarProps {
   selectedDate?: string; // YYYY-MM-DD
   onSelectDate: (date: string) => void;
   minDate?: string; // YYYY-MM-DD, defaults to today
   maxDate?: string; // YYYY-MM-DD, defaults to 24 months from now
-  checkAvailability?: (date: string) => { isAvailable: boolean; reason?: string };
+  checkAvailability?: (date: string) => {
+    isAvailable: boolean;
+    reason?: string;
+  };
   blockedDates?: string[];
   bookedDates?: string[];
-  mode?: 'booking' | 'view' | 'manage';
+  mode?: "booking" | "view" | "manage";
   onToggleDateBlock?: (date: string) => void;
   className?: string;
   showShortcuts?: boolean;
@@ -19,8 +27,8 @@ export interface InteractiveCalendarProps {
 
 function formatDateToISO(year: number, month: number, day: number): string {
   const y = year.toString();
-  const m = (month + 1).toString().padStart(2, '0');
-  const d = day.toString().padStart(2, '0');
+  const m = (month + 1).toString().padStart(2, "0");
+  const d = day.toString().padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 
@@ -37,9 +45,9 @@ export function InteractiveCalendar({
   checkAvailability,
   blockedDates = [],
   bookedDates = [],
-  mode = 'booking',
+  mode = "booking",
   onToggleDateBlock,
-  className = '',
+  className = "",
   showShortcuts = true,
 }: InteractiveCalendarProps) {
   const todayISO = useMemo(() => getTodayISO(), []);
@@ -48,7 +56,7 @@ export function InteractiveCalendar({
   // Determine initial displayed month/year
   const initialDateObj = useMemo(() => {
     if (selectedDate && /^\d{4}-\d{2}-\d{2}$/.test(selectedDate)) {
-      const [y, m] = selectedDate.split('-').map(Number);
+      const [y, m] = selectedDate.split("-").map(Number);
       return new Date(y, m - 1, 1);
     }
     const now = new Date();
@@ -60,7 +68,7 @@ export function InteractiveCalendar({
   // If selectedDate changes from outside (e.g. passed from another view), sync the month view
   useEffect(() => {
     if (selectedDate && /^\d{4}-\d{2}-\d{2}$/.test(selectedDate)) {
-      const [y, m] = selectedDate.split('-').map(Number);
+      const [y, m] = selectedDate.split("-").map(Number);
       setCurrentViewDate(new Date(y, m - 1, 1));
     }
   }, [selectedDate]);
@@ -68,7 +76,10 @@ export function InteractiveCalendar({
   const currentYear = currentViewDate.getFullYear();
   const currentMonth = currentViewDate.getMonth();
 
-  const monthName = currentViewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = currentViewDate.toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
 
   // Navigation handlers
   const handlePrevMonth = () => {
@@ -81,7 +92,9 @@ export function InteractiveCalendar({
 
   const handleJumpToMonthOffset = (offsetMonths: number) => {
     const now = new Date();
-    setCurrentViewDate(new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1));
+    setCurrentViewDate(
+      new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1),
+    );
   };
 
   // Calendar calculations
@@ -110,7 +123,11 @@ export function InteractiveCalendar({
     for (let i = firstDayIndex - 1; i >= 0; i--) {
       const prevDay = daysInPrevMonth - i;
       const prevDate = new Date(currentYear, currentMonth - 1, prevDay);
-      const dateISO = formatDateToISO(prevDate.getFullYear(), prevDate.getMonth(), prevDay);
+      const dateISO = formatDateToISO(
+        prevDate.getFullYear(),
+        prevDate.getMonth(),
+        prevDay,
+      );
       days.push({
         dayNumber: prevDay,
         dateISO,
@@ -161,7 +178,11 @@ export function InteractiveCalendar({
     const remainingCells = totalCells - days.length;
     for (let d = 1; d <= remainingCells; d++) {
       const nextDate = new Date(currentYear, currentMonth + 1, d);
-      const dateISO = formatDateToISO(nextDate.getFullYear(), nextDate.getMonth(), d);
+      const dateISO = formatDateToISO(
+        nextDate.getFullYear(),
+        nextDate.getMonth(),
+        d,
+      );
       days.push({
         dayNumber: d,
         dateISO,
@@ -176,10 +197,19 @@ export function InteractiveCalendar({
     }
 
     return days;
-  }, [currentYear, currentMonth, effectiveMinDate, todayISO, selectedDate, blockedDates, bookedDates, checkAvailability]);
+  }, [
+    currentYear,
+    currentMonth,
+    effectiveMinDate,
+    todayISO,
+    selectedDate,
+    blockedDates,
+    bookedDates,
+    checkAvailability,
+  ]);
 
-  const handleCellClick = (cell: typeof calendarGrid[0]) => {
-    if (mode === 'manage') {
+  const handleCellClick = (cell: (typeof calendarGrid)[0]) => {
+    if (mode === "manage") {
       if (onToggleDateBlock && cell.isCurrentMonth) {
         onToggleDateBlock(cell.dateISO);
       }
@@ -188,7 +218,7 @@ export function InteractiveCalendar({
 
     if (!cell.isCurrentMonth) {
       // If clicking adjacent month, navigate there
-      const [y, m] = cell.dateISO.split('-').map(Number);
+      const [y, m] = cell.dateISO.split("-").map(Number);
       setCurrentViewDate(new Date(y, m - 1, 1));
       if (!cell.isPast && cell.isAvailable) {
         onSelectDate(cell.dateISO);
@@ -197,13 +227,15 @@ export function InteractiveCalendar({
     }
 
     if (cell.isPast) return;
-    if (!cell.isAvailable && mode === 'booking') return;
+    if (!cell.isAvailable && mode === "booking") return;
 
     onSelectDate(cell.dateISO);
   };
 
   return (
-    <div className={`rounded-3xl border border-[#E8E2D2] bg-white p-4 sm:p-6 shadow-xs ${className}`}>
+    <div
+      className={`rounded-3xl border border-[#E8E2D2] bg-white p-4 sm:p-6 shadow-xs ${className}`}
+    >
       {/* Month Header & Quick Navigation */}
       <div className="flex flex-col gap-3 pb-4 border-b border-[#F0ECE1]">
         <div className="flex items-center justify-between">
@@ -212,13 +244,13 @@ export function InteractiveCalendar({
               <CalendarIcon className="h-4 w-4 text-[#C59B27]" />
             </div>
             <div>
-              <h3 className="font-serif text-lg font-bold text-[#1A1A1A] leading-none">
+              <h3 className=" text-lg font-bold text-[#1A1A1A] leading-none">
                 {monthName}
               </h3>
               <p className="text-[11px] text-[#767471] mt-0.5">
-                {mode === 'manage'
-                  ? 'Click dates to toggle availability locks'
-                  : 'Live verified availability'}
+                {mode === "manage"
+                  ? "Click dates to toggle availability locks"
+                  : "Live verified availability"}
               </p>
             </div>
           </div>
@@ -284,11 +316,11 @@ export function InteractiveCalendar({
 
       {/* Weekday Labels */}
       <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center pt-3 pb-1">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, idx) => (
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d, idx) => (
           <div
             key={d}
             className={`py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${
-              idx === 0 || idx === 6 ? 'text-[#C59B27]' : 'text-[#767471]'
+              idx === 0 || idx === 6 ? "text-[#C59B27]" : "text-[#767471]"
             }`}
           >
             {d}
@@ -312,7 +344,7 @@ export function InteractiveCalendar({
             );
           }
 
-          if (mode === 'manage') {
+          if (mode === "manage") {
             return (
               <button
                 key={cell.dateISO}
@@ -320,15 +352,19 @@ export function InteractiveCalendar({
                 onClick={() => handleCellClick(cell)}
                 className={`relative flex h-12 sm:h-14 flex-col items-center justify-center rounded-xl border text-xs font-semibold transition ${
                   cell.isBooked
-                    ? 'border-[#2D6A4F] bg-[#2D6A4F] text-white shadow-xs'
+                    ? "border-[#2D6A4F] bg-[#2D6A4F] text-white shadow-xs"
                     : cell.isBlocked
-                    ? 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'
-                    : 'border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27] hover:bg-white'
+                      ? "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                      : "border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27] hover:bg-white"
                 }`}
               >
                 <span className="text-sm font-bold">{cell.dayNumber}</span>
                 <span className="text-[8px] sm:text-[9px] uppercase tracking-wider font-medium mt-0.5">
-                  {cell.isBooked ? 'Booked' : cell.isBlocked ? 'Blocked' : 'Open'}
+                  {cell.isBooked
+                    ? "Booked"
+                    : cell.isBlocked
+                      ? "Blocked"
+                      : "Open"}
                 </span>
                 {cell.isToday && (
                   <span className="absolute bottom-1 h-1 w-1 rounded-full bg-[#C59B27]" />
@@ -346,39 +382,44 @@ export function InteractiveCalendar({
               type="button"
               disabled={!isSelectable && !cell.isSelected}
               onClick={() => handleCellClick(cell)}
-              title={cell.reason || (cell.isAvailable ? 'Available for booking' : 'Unavailable')}
+              title={
+                cell.reason ||
+                (cell.isAvailable ? "Available for booking" : "Unavailable")
+              }
               className={`relative flex h-12 sm:h-14 flex-col items-center justify-center rounded-xl border text-xs font-semibold transition ${
                 cell.isSelected
-                  ? 'border-[#C59B27] bg-[#C59B27] text-white shadow-md ring-2 ring-[#C59B27]/40 z-10 scale-[1.02]'
+                  ? "border-[#C59B27] bg-[#C59B27] text-white shadow-md ring-2 ring-[#C59B27]/40 z-10 scale-[1.02]"
                   : cell.isPast
-                  ? 'cursor-not-allowed border-transparent bg-transparent text-[#B8B4AA] opacity-40'
-                  : !cell.isAvailable
-                  ? 'cursor-not-allowed border-transparent bg-[#F0ECE1]/70 text-[#8C8880]'
-                  : 'cursor-pointer border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27] hover:bg-white hover:shadow-xs'
+                    ? "cursor-not-allowed border-transparent bg-transparent text-[#B8B4AA] opacity-40"
+                    : !cell.isAvailable
+                      ? "cursor-not-allowed border-transparent bg-[#F0ECE1]/70 text-[#8C8880]"
+                      : "cursor-pointer border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27] hover:bg-white hover:shadow-xs"
               }`}
             >
-              <span className={`text-sm ${cell.isSelected ? 'font-bold' : 'font-semibold'}`}>
+              <span
+                className={`text-sm ${cell.isSelected ? "font-bold" : "font-semibold"}`}
+              >
                 {cell.dayNumber}
               </span>
-              
+
               <span
                 className={`text-[8px] sm:text-[9px] font-medium tracking-tight mt-0.5 ${
                   cell.isSelected
-                    ? 'text-white font-bold'
+                    ? "text-white font-bold"
                     : cell.isPast
-                    ? 'text-[#A09D96]'
-                    : !cell.isAvailable
-                    ? 'text-[#767471]'
-                    : 'text-[#2D6A4F] font-semibold'
+                      ? "text-[#A09D96]"
+                      : !cell.isAvailable
+                        ? "text-[#767471]"
+                        : "text-[#2D6A4F] font-semibold"
                 }`}
               >
                 {cell.isSelected
-                  ? 'Selected'
+                  ? "Selected"
                   : cell.isPast
-                  ? 'Past'
-                  : !cell.isAvailable
-                  ? 'Engaged'
-                  : 'Free'}
+                    ? "Past"
+                    : !cell.isAvailable
+                      ? "Engaged"
+                      : "Free"}
               </span>
 
               {cell.isToday && !cell.isSelected && (
