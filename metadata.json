@@ -1,0 +1,6 @@
+{
+  "name": "PhotoBook",
+  "description": "Curated photography booking platform and PWA connecting discerning patrons with master visual artists across India.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
