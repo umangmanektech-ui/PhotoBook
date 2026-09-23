@@ -1,29 +1,33 @@
 "use client";
 
+import React, { useState } from "react";
 import { useApp } from "@/lib/store/app-context";
-import { Booking } from "@/lib/types";
 import {
-  AlertCircle,
-  ArrowLeft,
-  ArrowRight,
-  Calendar,
+  X,
   Check,
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+  ArrowLeft,
+  MessageSquare,
+  AlertCircle,
+  FileCheck,
+  Lock,
+  User,
   ChevronLeft,
   ChevronRight,
-  Clock,
-  Lock,
-  MapPin,
-  MessageSquare,
-  ShieldCheck,
-  User,
-  X,
+  Info,
 } from "lucide-react";
-import React, { useState } from "react";
+import { Booking } from "@/lib/types";
 
 interface BookingFlowModalProps {
   photographerId: string;
   initialPackageId?: string;
-  initialDate: string;
+  initialDate?: string;
   onClose: () => void;
   onComplete: (booking: Booking) => void;
   onOpenChat: (bookingId: string) => void;
@@ -62,23 +66,44 @@ export function BookingFlowModal({
     initialPackageId || photogPackages[0]?.id || "",
   );
 
-  const defaultDate = initialDate;
-  const [eventDate, setEventDate] = useState<string>(defaultDate);
+  const parseRange = (dateStr?: string) => {
+    if (!dateStr) return { start: "", end: null };
+    const parts = dateStr.split(/ to | – | - /);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return { start: parts[0].trim(), end: parts[1].trim() };
+    }
+    return { start: dateStr.trim(), end: null };
+  };
+
+  const [rangeStart, setRangeStart] = useState<string>(
+    () => parseRange(initialDate).start,
+  );
+  const [rangeEnd, setRangeEnd] = useState<string | null>(
+    () => parseRange(initialDate).end,
+  );
+
+  const eventDate = React.useMemo(() => {
+    return rangeEnd ? `${rangeStart} to ${rangeEnd}` : rangeStart;
+  }, [rangeStart, rangeEnd]);
 
   // Modal mini calendar state
   const [stepCalYear, setStepCalYear] = useState<number>(() => {
-    const parts = initialDate.split("-");
+    const firstDate = initialDate ? initialDate.split(/ to | – /)[0] : "";
+    const parts = (firstDate || "").split("-");
     return parseInt(parts[0]) || 2026;
   });
   const [stepCalMonth, setStepCalMonth] = useState<number>(() => {
-    const parts = initialDate.split("-");
+    const firstDate = initialDate ? initialDate.split(/ to | – /)[0] : "";
+    const parts = (firstDate || "").split("-");
     return (parseInt(parts[1]) || 9) - 1; // 0-indexed
   });
 
   React.useEffect(() => {
     if (initialDate) {
-      setEventDate(initialDate);
-      const parts = initialDate.split("-");
+      const parsed = parseRange(initialDate);
+      setRangeStart(parsed.start);
+      setRangeEnd(parsed.end);
+      const parts = parsed.start.split("-");
       if (parts.length === 3) {
         setStepCalYear(parseInt(parts[0]) || 2026);
         setStepCalMonth((parseInt(parts[1]) || 9) - 1);
@@ -204,7 +229,7 @@ export function BookingFlowModal({
         {/* Header Modal Bar */}
         <div className="flex items-center justify-between border-b border-[#E8E2D2] bg-white px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className=" text-lg font-bold text-[#1A1A1A]">
+            <span className="font-serif text-lg font-bold text-[#1A1A1A]">
               {currentStep === 6
                 ? "Reservation Dispatched"
                 : "Commission Photographer"}
@@ -275,7 +300,7 @@ export function BookingFlowModal({
           {currentStep === 1 && (
             <div className="space-y-4">
               <div>
-                <h3 className=" text-lg font-bold text-[#1A1A1A]">
+                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
                   Select a Commission Tier
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -298,7 +323,7 @@ export function BookingFlowModal({
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className=" text-base font-bold text-[#1A1A1A]">
+                          <h4 className="font-serif text-base font-bold text-[#1A1A1A]">
                             {pkg.name}
                           </h4>
                           {pkg.is_popular && (
@@ -311,7 +336,7 @@ export function BookingFlowModal({
                       </div>
 
                       <div className="text-right">
-                        <div className=" text-lg font-bold text-[#1A1A1A]">
+                        <div className="font-serif text-lg font-bold text-[#1A1A1A]">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </div>
                         <div className="text-[10px] text-[#767471]">
@@ -376,7 +401,7 @@ export function BookingFlowModal({
               return (
                 <div className="space-y-4">
                   <div>
-                    <h3 className=" text-lg font-bold text-[#1A1A1A]">
+                    <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
                       Select Your Event Date
                     </h3>
                     <p className="text-xs text-[#767471]">
@@ -389,7 +414,7 @@ export function BookingFlowModal({
                   <div className="rounded-2xl border border-[#E8E2D2] bg-white p-4 shadow-xs">
                     {/* Calendar Month Nav Header */}
                     <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#F0ECE1]">
-                      <div className=" text-sm font-bold text-[#1A1A1A]">
+                      <div className="font-serif text-sm font-bold text-[#1A1A1A]">
                         {stepMonthName} {stepCalYear}
                       </div>
                       <div className="flex items-center gap-1">
@@ -438,23 +463,54 @@ export function BookingFlowModal({
                           dateStr,
                         );
                         const isPast = dateStr < todayStr;
-                        const isSelected = dateStr === eventDate;
                         const isBooked = !avail.isAvailable && !isPast;
+
+                        const isStart = rangeStart === dateStr;
+                        const isEnd = rangeEnd === dateStr;
+                        const isBetween =
+                          rangeStart &&
+                          rangeEnd &&
+                          dateStr > rangeStart &&
+                          dateStr < rangeEnd;
+                        const isSingle = isStart && !rangeEnd;
+
+                        const handleStepDateClick = () => {
+                          if (!rangeStart || (rangeStart && rangeEnd)) {
+                            setRangeStart(dateStr);
+                            setRangeEnd(null);
+                          } else if (rangeStart && !rangeEnd) {
+                            if (dateStr < rangeStart) {
+                              setRangeStart(dateStr);
+                              setRangeEnd(null);
+                            } else if (dateStr === rangeStart) {
+                              setRangeStart(dateStr);
+                              setRangeEnd(null);
+                            } else {
+                              setRangeEnd(dateStr);
+                            }
+                          }
+                        };
 
                         return (
                           <button
                             key={dateStr}
                             type="button"
                             disabled={isBooked || isPast}
-                            onClick={() => setEventDate(dateStr)}
-                            className={`flex h-9 flex-col items-center justify-center rounded-lg text-xs font-semibold transition ${
-                              isSelected
-                                ? "bg-[#C59B27] text-white font-bold shadow-xs ring-2 ring-[#C59B27]/40"
-                                : isPast
-                                  ? "bg-[#F5F2EA]/60 text-[#B0ADA8] cursor-not-allowed opacity-60"
-                                  : isBooked
-                                    ? "bg-[#F0ECE1]/70 text-[#A6A4A0] cursor-not-allowed line-through"
-                                    : "bg-[#FBF9F5] border border-[#E8E2D2] text-[#1A1A1A] hover:border-[#C59B27]"
+                            onClick={handleStepDateClick}
+                            className={`flex h-9 flex-col items-center justify-center text-xs font-semibold transition ${
+                              isStart && rangeEnd
+                                ? "bg-[#C59B27] text-white font-bold shadow-xs rounded-l-lg rounded-r-none z-10"
+                                : isEnd
+                                  ? "bg-[#C59B27] text-white font-bold shadow-xs rounded-r-lg rounded-l-none z-10"
+                                  : isBetween
+                                    ? "bg-[#C59B27]/25 border-y border-[#C59B27]/40 text-[#1A1A1A] font-bold rounded-none"
+                                    : isSingle
+                                      ? "bg-[#C59B27] text-white font-bold shadow-xs ring-2 ring-[#C59B27]/40 rounded-lg"
+                                      : isPast
+                                        ? "bg-[#F5F2EA]/60 text-[#B0ADA8] cursor-not-allowed opacity-60 rounded-lg"
+                                        : isBooked
+                                          ? "bg-[#F0ECE1]/70 text-[#A6A4A0] cursor-not-allowed line-through rounded-lg"
+                                          : "bg-[#FBF9F5] border border-[#E8E2D2] text-[#1A1A1A] hover:border-[#C59B27] rounded-lg"
                             }`}
                           >
                             <span>{dayNum}</span>
@@ -468,10 +524,21 @@ export function BookingFlowModal({
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-[#C59B27]" />
                         <span>
-                          Selected Date:{" "}
-                          <strong className="text-[#1A1A1A]">
-                            {eventDate}
-                          </strong>
+                          {rangeEnd ? (
+                            <>
+                              Selected Date Range:{" "}
+                              <strong className="text-[#1A1A1A]">
+                                {rangeStart} to {rangeEnd}
+                              </strong>
+                            </>
+                          ) : (
+                            <>
+                              Selected Date:{" "}
+                              <strong className="text-[#1A1A1A]">
+                                {rangeStart}
+                              </strong>
+                            </>
+                          )}
                         </span>
                       </div>
                       <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
@@ -495,7 +562,7 @@ export function BookingFlowModal({
           {currentStep === 3 && (
             <div className="space-y-4">
               <div>
-                <h3 className=" text-lg font-bold text-[#1A1A1A]">
+                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
                   Preferred Shooting Window
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -562,7 +629,7 @@ export function BookingFlowModal({
           {currentStep === 4 && (
             <div className="space-y-4">
               <div>
-                <h3 className=" text-lg font-bold text-[#1A1A1A]">
+                <h3 className="font-serif text-lg font-bold text-[#1A1A1A]">
                   Event Parameters & Venue
                 </h3>
                 <p className="text-xs text-[#767471]">
@@ -647,7 +714,7 @@ export function BookingFlowModal({
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                   Final Confirmation
                 </span>
-                <h3 className=" text-xl font-bold text-[#1A1A1A]">
+                <h3 className="font-serif text-xl font-bold text-[#1A1A1A]">
                   Summary of Request
                 </h3>
               </div>
@@ -660,7 +727,7 @@ export function BookingFlowModal({
                   className="h-12 w-12 rounded-xl object-cover ring-1 ring-[#C59B27]"
                 />
                 <div>
-                  <h4 className=" text-sm font-bold text-[#1A1A1A]">
+                  <h4 className="font-serif text-sm font-bold text-[#1A1A1A]">
                     {photographer.business_name}
                   </h4>
                   <p className="text-xs text-[#767471]">
@@ -676,7 +743,7 @@ export function BookingFlowModal({
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#767471]">
                       Selected Tier
                     </span>
-                    <h4 className=" text-base font-bold text-[#1A1A1A]">
+                    <h4 className="font-serif text-base font-bold text-[#1A1A1A]">
                       {selectedPackage.name}
                     </h4>
                     <p className="text-xs text-[#52504E]">
@@ -684,7 +751,7 @@ export function BookingFlowModal({
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className=" text-lg font-bold text-[#1A1A1A]">
+                    <div className="font-serif text-lg font-bold text-[#1A1A1A]">
                       ₹{selectedPackage.price.toLocaleString("en-IN")}
                     </div>
                     <div className="text-[10px] text-[#767471]">
@@ -783,7 +850,7 @@ export function BookingFlowModal({
                   <div>
                     <div className="flex items-center gap-2">
                       <Lock className="h-4 w-4 text-[#C59B27]" />
-                      <h4 className=" text-sm font-bold text-[#1A1A1A]">
+                      <h4 className="font-serif text-sm font-bold text-[#1A1A1A]">
                         Patron Account Information
                       </h4>
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-900">
@@ -869,7 +936,7 @@ export function BookingFlowModal({
                 <span className="rounded-full bg-[#C59B27]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#997316]">
                   Reservation Dispatched
                 </span>
-                <h3 className="mt-2  text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+                <h3 className="mt-2 font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
                   Booking Request Sent!
                 </h3>
                 <p className="mt-1 text-xs text-[#767471]">
@@ -884,14 +951,14 @@ export function BookingFlowModal({
               <div className="rounded-2xl border border-[#E8E2D2] bg-white p-5 text-left shadow-xs">
                 <div className="flex justify-between items-center pb-3 border-b border-[#F0ECE1]">
                   <div>
-                    <div className=" text-sm font-bold text-[#1A1A1A]">
+                    <div className="font-serif text-sm font-bold text-[#1A1A1A]">
                       {createdBooking.photographer_name}
                     </div>
                     <div className="text-xs text-[#767471]">
                       {createdBooking.package_name}
                     </div>
                   </div>
-                  <div className="text-right  text-base font-bold text-[#1A1A1A]">
+                  <div className="text-right font-serif text-base font-bold text-[#1A1A1A]">
                     ₹{createdBooking.total_price.toLocaleString("en-IN")}
                   </div>
                 </div>

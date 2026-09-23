@@ -361,7 +361,7 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                   )}
 
                   {/* Role Switch Shortcut */}
-                  <div className="mt-1 pt-1 border-t border-[#F0ECE1]">
+                  {/* <div className="mt-1 pt-1 border-t border-[#F0ECE1]">
                     <button
                       onClick={() => {
                         const nextRole =
@@ -391,7 +391,7 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                       </div>
                       <ArrowRight className="h-3 w-3 text-[#767471]" />
                     </button>
-                  </div>
+                  </div> */}
 
                   {/* Sign Out Action */}
                   <div className="mt-1 pt-1 border-t border-[#F0ECE1]">

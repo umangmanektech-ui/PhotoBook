@@ -1,26 +1,27 @@
 "use client";
 
+import React, { useState, useMemo } from "react";
 import { useApp } from "@/lib/store/app-context";
 import {
   ArrowLeft,
-  Award,
+  Share2,
+  Heart,
+  ShieldCheck,
+  Star,
+  MapPin,
   Calendar,
+  MessageSquare,
+  Award,
   Camera,
   Check,
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  Info,
-  MapPin,
-  Maximize2,
-  MessageSquare,
-  Share2,
-  ShieldCheck,
   Sparkles,
-  Star,
+  ChevronRight,
+  ChevronLeft,
+  Info,
+  Maximize2,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { PackageTier } from "@/lib/types";
 
 interface PhotographerDetailViewProps {
   photographerId: string;
@@ -73,7 +74,33 @@ export function PhotographerDetailView({
   const [calYear, setCalYear] = useState<number>(2026);
   const [calMonth, setCalMonth] = useState<number>(8);
 
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState<string>();
+  // Format selected date default (17 Sept 2026 default start)
+  const [selectedStartDate, setSelectedStartDate] = useState<string>();
+  const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+
+  const formattedSelectedDate = useMemo(() => {
+    if (selectedStartDate && selectedEndDate) {
+      return `${selectedStartDate} to ${selectedEndDate}`;
+    }
+    return selectedStartDate || "";
+  }, [selectedStartDate, selectedEndDate]);
+
+  const handleDateClick = (dateStr: string) => {
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+      setSelectedStartDate(dateStr);
+      setSelectedEndDate(null);
+    } else if (selectedStartDate && !selectedEndDate) {
+      if (dateStr < selectedStartDate) {
+        setSelectedStartDate(dateStr);
+        setSelectedEndDate(null);
+      } else if (dateStr === selectedStartDate) {
+        setSelectedStartDate(dateStr);
+        setSelectedEndDate(null);
+      } else {
+        setSelectedEndDate(dateStr);
+      }
+    }
+  };
 
   // Dynamic portfolio categories
   const portfolioCategories = useMemo(() => {
@@ -157,7 +184,9 @@ export function PhotographerDetailView({
   if (!photographer) {
     return (
       <div className="mx-auto max-w-4xl p-12 text-center">
-        <h2 className=" text-xl font-bold">Photographer Profile Unavailable</h2>
+        <h2 className="font-serif text-xl font-bold">
+          Photographer Profile Unavailable
+        </h2>
         <button
           onClick={onBack}
           className="mt-4 rounded-xl bg-[#1A1A1A] px-4 py-2 text-xs text-white"
@@ -169,7 +198,7 @@ export function PhotographerDetailView({
   }
 
   return (
-    <div className="min-h-screen pb-40 sm:pb-32 text-[#1A1A1A]">
+    <div className="min-h-screen pb-32 text-[#1A1A1A]">
       {/* Top Nav Bar */}
       <div className="sticky top-16 z-30 flex items-center justify-between border-b border-[#E8E2D2] bg-[#FBF9F5]/90 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
@@ -254,7 +283,7 @@ export function PhotographerDetailView({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h1 className=" text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
                       {photographer.business_name}
                     </h1>
                     {photographer.is_verified && (
@@ -287,7 +316,7 @@ export function PhotographerDetailView({
                   onClick={() => {
                     const firstPkg = photogPackages[0];
                     if (firstPkg)
-                      onSelectPackageToBook(firstPkg.id, selectedCalendarDate);
+                      onSelectPackageToBook(firstPkg.id, formattedSelectedDate);
                   }}
                   className="flex items-center gap-2 rounded-xl bg-[#C59B27] px-5 py-2.5 text-xs font-semibold text-[#1A1A1A] shadow-md hover:bg-[#D4AF37] transition active:scale-98"
                 >
@@ -300,7 +329,7 @@ export function PhotographerDetailView({
 
           {/* Artist Bio & Technical Specifications */}
           <div className="p-6 sm:p-8">
-            <blockquote className="border-l-2 border-[#C59B27] pl-4  text-sm sm:text-base italic leading-relaxed text-[#1A1A1A]">
+            <blockquote className="border-l-2 border-[#C59B27] pl-4 font-serif text-sm sm:text-base italic leading-relaxed text-[#1A1A1A]">
               &ldquo;{photographer.bio}&rdquo;
             </blockquote>
 
@@ -357,7 +386,7 @@ export function PhotographerDetailView({
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                 Curated Catalog
               </div>
-              <h2 className=" text-2xl font-bold text-[#1A1A1A]">
+              <h2 className="font-serif text-2xl font-bold text-[#1A1A1A]">
                 Selected Works ({photogPortfolio.length} Frames)
               </h2>
             </div>
@@ -400,7 +429,7 @@ export function PhotographerDetailView({
                     <span className="rounded-full bg-[#C59B27]/20 border border-[#C59B27]/40 px-2 py-0.5 text-[9px] font-semibold text-[#F4E8C1] uppercase tracking-wider">
                       {work.category}
                     </span>
-                    <h3 className="mt-1  text-sm font-bold leading-tight">
+                    <h3 className="mt-1 font-serif text-sm font-bold leading-tight">
                       {work.title}
                     </h3>
                     {work.caption && (
@@ -428,7 +457,7 @@ export function PhotographerDetailView({
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
                 Live Diary
               </div>
-              <h2 className=" text-xl sm:text-2xl font-bold text-[#1A1A1A]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1A1A]">
                 {monthName} {calYear} Availability
               </h2>
               <p className="text-xs text-[#767471]">
@@ -493,7 +522,14 @@ export function PhotographerDetailView({
             ))}
 
             {calendarDays.map((cal) => {
-              const isSelected = selectedCalendarDate === cal.date;
+              const isStart = selectedStartDate === cal.date;
+              const isEnd = selectedEndDate === cal.date;
+              const isBetween =
+                selectedStartDate &&
+                selectedEndDate &&
+                cal.date > selectedStartDate &&
+                cal.date < selectedEndDate;
+              const isSingle = isStart && !selectedEndDate;
               const isBooked = !cal.isAvailable && !cal.isPast;
               const isPast = cal.isPast;
 
@@ -502,15 +538,21 @@ export function PhotographerDetailView({
                   key={cal.date}
                   type="button"
                   disabled={isBooked || isPast}
-                  onClick={() => setSelectedCalendarDate(cal.date)}
-                  className={`flex h-12 flex-col items-center justify-center rounded-xl border text-xs font-semibold transition ${
-                    isSelected
-                      ? "border-[#C59B27] bg-[#C59B27] text-white shadow-sm ring-2 ring-[#C59B27]/40"
-                      : isPast
-                        ? "cursor-not-allowed border-transparent bg-[#F5F2EA]/60 text-[#B0ADA8] opacity-60"
-                        : isBooked
-                          ? "cursor-not-allowed border-transparent bg-[#F0ECE1]/70 text-[#A6A4A0] line-through"
-                          : "border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27]"
+                  onClick={() => handleDateClick(cal.date)}
+                  className={`flex h-12 flex-col items-center justify-center border text-xs font-semibold transition ${
+                    isStart && selectedEndDate
+                      ? "border-[#C59B27] bg-[#C59B27] text-white shadow-xs font-bold rounded-l-xl rounded-r-none z-10"
+                      : isEnd
+                        ? "border-[#C59B27] bg-[#C59B27] text-white shadow-xs font-bold rounded-r-xl rounded-l-none z-10"
+                        : isBetween
+                          ? "border-y border-[#C59B27]/50 bg-[#C59B27]/25 text-[#1A1A1A] font-bold rounded-none"
+                          : isSingle
+                            ? "border-[#C59B27] bg-[#C59B27] text-white shadow-xs ring-2 ring-[#C59B27]/40 rounded-xl"
+                            : isPast
+                              ? "cursor-not-allowed border-transparent bg-[#F5F2EA]/60 text-[#B0ADA8] opacity-60 rounded-xl"
+                              : isBooked
+                                ? "cursor-not-allowed border-transparent bg-[#F0ECE1]/70 text-[#A6A4A0] line-through rounded-xl"
+                                : "border-[#E8E2D2] bg-[#FBF9F5] text-[#1A1A1A] hover:border-[#C59B27] rounded-xl"
                   }`}
                   title={
                     isPast
@@ -526,9 +568,13 @@ export function PhotographerDetailView({
                       ? "Past"
                       : isBooked
                         ? "Booked"
-                        : isSelected
-                          ? "Choice"
-                          : "Free"}
+                        : isStart
+                          ? "Start"
+                          : isEnd
+                            ? "End"
+                            : isBetween
+                              ? "Range"
+                              : "Free"}
                   </span>
                 </button>
               );
@@ -539,22 +585,40 @@ export function PhotographerDetailView({
             <div className="flex items-center gap-2">
               <Info className="h-4 w-4 text-[#C59B27] shrink-0" />
               <span>
-                Selected date:{" "}
-                <strong className="text-[#1A1A1A]">
-                  {selectedCalendarDate}
-                </strong>{" "}
-                is open for reservation.
+                {selectedStartDate && selectedEndDate ? (
+                  <>
+                    Selected Date Range:{" "}
+                    <strong className="text-[#1A1A1A]">
+                      {selectedStartDate} to {selectedEndDate}
+                    </strong>{" "}
+                    (
+                    {Math.round(
+                      (new Date(selectedEndDate).getTime() -
+                        new Date(selectedStartDate).getTime()) /
+                        (1000 * 3600 * 24),
+                    ) + 1}{" "}
+                    Days)
+                  </>
+                ) : (
+                  <>
+                    Selected Date:{" "}
+                    <strong className="text-[#1A1A1A]">
+                      {selectedStartDate}
+                    </strong>{" "}
+                    is open for reservation.
+                  </>
+                )}
               </span>
             </div>
             <button
               onClick={() => {
                 const firstPkg = photogPackages[0];
                 if (firstPkg)
-                  onSelectPackageToBook(firstPkg.id, selectedCalendarDate);
+                  onSelectPackageToBook(firstPkg.id, formattedSelectedDate);
               }}
               className="rounded-lg bg-[#1A1A1A] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#333] transition self-end sm:self-auto"
             >
-              Book for {selectedCalendarDate}
+              Book for {formattedSelectedDate}
             </button>
           </div>
         </section>
@@ -565,7 +629,7 @@ export function PhotographerDetailView({
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               Transparent Pricing
             </span>
-            <h2 className="mt-1  text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+            <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
               Curated Collections
             </h2>
             <p className="mt-1.5 text-xs text-[#767471]">
@@ -594,12 +658,12 @@ export function PhotographerDetailView({
                   <div className="text-[11px] font-semibold text-[#767471] uppercase tracking-wider">
                     {pkg.tagline}
                   </div>
-                  <h3 className="mt-1  text-2xl font-bold text-[#1A1A1A]">
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-[#1A1A1A]">
                     {pkg.name}
                   </h3>
 
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className=" text-3xl font-bold text-[#1A1A1A]">
+                    <span className="font-serif text-3xl font-bold text-[#1A1A1A]">
                       ₹{pkg.price.toLocaleString("en-IN")}
                     </span>
                     <span className="text-xs text-[#767471]">all incl.</span>
@@ -631,7 +695,7 @@ export function PhotographerDetailView({
                   <button
                     id={`select-package-${pkg.id}`}
                     onClick={() =>
-                      onSelectPackageToBook(pkg.id, selectedCalendarDate)
+                      onSelectPackageToBook(pkg.id, formattedSelectedDate)
                     }
                     className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-bold transition shadow-xs ${
                       pkg.is_popular
@@ -658,7 +722,7 @@ export function PhotographerDetailView({
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#C59B27]">
               Patron Reviews
             </span>
-            <h2 className="mt-1  text-2xl font-bold text-[#1A1A1A]">
+            <h2 className="mt-1 font-serif text-2xl font-bold text-[#1A1A1A]">
               Voices of Trust ({photographer.review_count})
             </h2>
           </div>
@@ -667,7 +731,7 @@ export function PhotographerDetailView({
             {/* Rating Scores Column */}
             <div className="lg:col-span-4 rounded-3xl border border-[#D9D2C2] bg-white p-6 shadow-sm">
               <div className="text-center pb-6 border-b border-[#F0ECE1]">
-                <div className=" text-4xl font-bold text-[#1A1A1A]">
+                <div className="font-serif text-4xl font-bold text-[#1A1A1A]">
                   {photographer.rating}
                 </div>
                 <div className="flex justify-center gap-1 mt-1 text-[#C59B27]">
@@ -761,13 +825,13 @@ export function PhotographerDetailView({
         </section>
       </div>
 
-      {/* Sticky Mobile Bottom Bar — sits above the global BottomNav (bottom-16) */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 flex items-center justify-between border-t border-[#E8E2D2] bg-white/95 px-6 py-3.5 backdrop-blur-md sm:hidden">
+      {/* Sticky Mobile Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between border-t border-[#E8E2D2] bg-white/95 px-6 py-3.5 backdrop-blur-md sm:hidden">
         <div>
           <span className="text-[10px] text-[#767471] uppercase block">
             Starting from
           </span>
-          <span className=" text-base font-bold text-[#1A1A1A]">
+          <span className="font-serif text-base font-bold text-[#1A1A1A]">
             ₹{photographer.starting_price.toLocaleString("en-IN")}
           </span>
         </div>
@@ -776,7 +840,7 @@ export function PhotographerDetailView({
           onClick={() => {
             const firstPkg = photogPackages[0];
             if (firstPkg)
-              onSelectPackageToBook(firstPkg.id, selectedCalendarDate);
+              onSelectPackageToBook(firstPkg.id, formattedSelectedDate);
           }}
           className="flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-5 py-2.5 text-xs font-semibold text-white shadow-sm active:scale-98"
         >
