@@ -16,6 +16,29 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Global interactive element cursors */
+button,
+a,
+[role="button"],
+select,
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+button[disabled],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* Mobile & PWA touch optimizations */
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -31,3 +54,4 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #c59b27;
 }
+

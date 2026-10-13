@@ -6,7 +6,10 @@ import { useCallback } from 'react';
 /** Maps old tab-name strings → real URL paths */
 const TAB_TO_PATH: Record<string, string> = {
   home: '/',
-  explore: '/explore',
+  book: '/book',
+  portfolio: '/portfolio',
+  photographers: '/photographers',
+  explore: '/photographers',
   saved: '/saved',
   bookings: '/bookings',
   profile: '/profile',

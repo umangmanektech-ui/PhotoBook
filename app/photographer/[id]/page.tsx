@@ -19,17 +19,7 @@ export default function PhotographerDetailPage({ params }: PageProps) {
   const { openAuthModal, openBookingModal, setPendingBooking } = useModal();
 
   const handleSelectPackageToBook = (packageId: string, date?: string) => {
-    if (!isAuthenticated) {
-      setPendingBooking({ photographerId: id, packageId, initialDate: date });
-      openAuthModal({
-        mode: 'login',
-        role: 'customer',
-        title: 'Sign In to Book a Session',
-        desc: 'A patron account is required to reserve dates, receive booking confirmation, and access your private gallery.',
-      });
-      return;
-    }
-    openBookingModal(id, packageId, date);
+    router.push(`/book?photographer=${encodeURIComponent(id)}${date ? `&date=${encodeURIComponent(date)}` : ''}`);
   };
 
   return (

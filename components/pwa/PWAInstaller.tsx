@@ -63,9 +63,14 @@ export function PWAInstaller() {
 
   useEffect(() => {
     // Register Service Worker
-    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
+        .then((reg) => {
+          if (process.env.NODE_ENV !== "production") {
+            console.log("PhotoBook PWA SW registered with scope:", reg.scope);
+          }
+        })
         .catch((err) => console.error("SW registration error:", err));
     }
 

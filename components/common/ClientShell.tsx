@@ -4,6 +4,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { BookingFlowModal } from '@/components/booking/BookingFlowModal';
 import { BottomNav } from '@/components/navigation/BottomNav';
 import { Header } from '@/components/navigation/Header';
+import { PWAInstaller } from '@/components/pwa/PWAInstaller';
 import { useModal } from '@/lib/store/modal-context';
 import { useNavigate } from '@/hooks/useNavigate';
 import { usePathname, useRouter } from 'next/navigation';
@@ -69,6 +70,9 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
       </main>
 
       <BottomNav currentTab={currentTab} onNavigate={navigate} />
+
+      {/* PWA Offline Ribbon & Install Trigger */}
+      <PWAInstaller />
 
       {/* ── Auth Modal ───────────────────────────────────────────────────── */}
       <AuthModal

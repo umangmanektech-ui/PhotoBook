@@ -10,7 +10,28 @@ import {
   AppNotification
 } from '../types';
 
-export const INITIAL_USERS: UserProfile[] = [];
+export const INITIAL_USERS: UserProfile[] = [
+  {
+    id: 'user-customer-sneha',
+    email: 'sneha@photobook.app',
+    role: 'customer',
+    full_name: 'Sneha Patel',
+    phone: '+91 98250 12345',
+    city: 'Ahmedabad',
+    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b9c638ee?auto=format&fit=crop&w=400&q=80',
+    created_at: '2024-01-15T10:00:00.000Z',
+  },
+  {
+    id: 'user-photographer-arjun',
+    email: 'arjun@photobook.app',
+    role: 'photographer',
+    full_name: 'Arjun Kumar',
+    phone: '+91 98765 43210',
+    city: 'Ahmedabad',
+    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    created_at: '2023-01-01T10:00:00.000Z',
+  },
+];
 
 export const INITIAL_CATEGORIES: Category[] = [
   {

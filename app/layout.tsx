@@ -3,6 +3,7 @@ import { ClientShell } from '@/components/common/ClientShell';
 import { cn } from '@/lib/utils';
 import { AppProvider } from '@/lib/store/app-context';
 import { ModalProvider } from '@/lib/store/modal-context';
+import { StudioProvider } from '@/lib/store/studio-context';
 import type { Metadata, Viewport } from 'next';
 import { Figtree } from 'next/font/google';
 import './globals.css';
@@ -21,6 +22,12 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
+  },
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
   },
   openGraph: {
     title: 'PhotoBook – Curated Photography Booking & Portfolios',
@@ -43,6 +50,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -53,9 +61,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning
       >
         <AppProvider>
-          <ModalProvider>
-            <ClientShell>{children}</ClientShell>
-          </ModalProvider>
+          <StudioProvider>
+            <ModalProvider>
+              <ClientShell>{children}</ClientShell>
+            </ModalProvider>
+          </StudioProvider>
         </AppProvider>
       </body>
     </html>

@@ -90,23 +90,24 @@ export function ProtectedRoute({
             <button
               onClick={() => {
                 if (onOpenAuth) {
-                  onOpenAuth("register", "photographer");
+                  onOpenAuth("login", "photographer");
                 } else {
-                  onNavigate("register", "photographer");
+                  onNavigate("auth", "photographer");
                 }
               }}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#D9D2C2] bg-[#FBF9F5] px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:bg-white transition"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1A1A1A] px-6 py-3.5 text-xs font-bold text-white shadow-xs hover:bg-[#333] transition"
             >
-              <UserPlus className="h-4 w-4 text-[#C59B27]" />
-              <span>Register as a New Photographer</span>
+              <LogIn className="h-4 w-4 text-[#C59B27]" />
+              <span>Sign In as Studio Admin</span>
+              <ArrowRight className="h-4 w-4 ml-1" />
             </button>
 
-            <div className="pt-3">
+            <div className="pt-2">
               <button
                 onClick={() => switchUserRole("photographer")}
                 className="text-[11px] font-semibold text-[#767471] hover:text-[#C59B27] underline"
               >
-                Or instant demo switch to Photographer Pro profile
+                Or instant switch to Arjun Kumar (Studio Admin)
               </button>
             </div>
           </div>

@@ -80,8 +80,8 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-6 md:flex">
-          {/* Public / Unauthenticated Navigation */}
-          {!isAuthenticated ? (
+          {/* Public / Customer Navigation (No Login Button) */}
+          {currentUser.role !== "photographer" ? (
             <>
               <button
                 id="nav-home-link"
@@ -95,51 +95,37 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                 Home
               </button>
               <button
-                id="nav-explore-link"
-                onClick={() => onNavigate("explore")}
+                id="nav-portfolio-link"
+                onClick={() => onNavigate("portfolio")}
                 className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "explore"
+                  currentTab === "portfolio"
                     ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
                     : "text-[#52504E] hover:text-[#1A1A1A]"
                 }`}
               >
-                All Photographers
+                Portfolio
               </button>
               <button
-                id="nav-saved-link"
-                onClick={() => onNavigate("saved")}
+                id="nav-photographers-link"
+                onClick={() => onNavigate("photographers")}
                 className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "saved"
+                  currentTab === "photographers"
                     ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
                     : "text-[#52504E] hover:text-[#1A1A1A]"
                 }`}
               >
-                Saved
-              </button>
-            </>
-          ) : currentUser.role === "customer" ? (
-            <>
-              <button
-                id="nav-home-link"
-                onClick={() => onNavigate("home")}
-                className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "home"
-                    ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
-                    : "text-[#52504E] hover:text-[#1A1A1A]"
-                }`}
-              >
-                Home
+                Photographers
               </button>
               <button
-                id="nav-explore-link"
-                onClick={() => onNavigate("explore")}
+                id="nav-book-link"
+                onClick={() => onNavigate("book")}
                 className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "explore"
+                  currentTab === "book"
                     ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
                     : "text-[#52504E] hover:text-[#1A1A1A]"
                 }`}
               >
-                All Photographers
+                Book Session
               </button>
               <button
                 id="nav-bookings-link"
@@ -151,28 +137,6 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                 }`}
               >
                 My Bookings
-              </button>
-              <button
-                id="nav-saved-link"
-                onClick={() => onNavigate("saved")}
-                className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "saved"
-                    ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
-                    : "text-[#52504E] hover:text-[#1A1A1A]"
-                }`}
-              >
-                Saved
-              </button>
-              <button
-                id="nav-profile-link"
-                onClick={() => onNavigate("profile")}
-                className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
-                  currentTab === "profile"
-                    ? "text-[#C59B27] border-b-2 border-[#C59B27] pb-1"
-                    : "text-[#52504E] hover:text-[#1A1A1A]"
-                }`}
-              >
-                Profile
               </button>
             </>
           ) : (
@@ -236,20 +200,23 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
           )}
         </nav>
 
-        {/* Right Action Controls: User Account Menu & Auth CTA */}
-        <div className="flex items-center gap-3">
-          {/* Sign In / Register button only shown when not authenticated */}
-          {!isAuthenticated ? (
+        {/* Right Action Controls: Book CTA & Photographer Admin Menu (No Customer Sign In) */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {currentUser.role !== "photographer" && (
             <button
-              id="header-auth-cta-btn"
-              onClick={() => onNavigate("auth")}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-4 py-2 text-xs font-bold text-white hover:bg-[#333] transition shadow-xs"
+              id="header-book-cta-btn"
+              onClick={() => onNavigate("book")}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-3.5 sm:px-4 py-2 text-xs font-bold text-white hover:bg-[#333] transition shadow-xs"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#C59B27]" />
-              <span>Sign In / Register</span>
+              <Camera className="h-3.5 w-3.5 text-[#C59B27]" />
+              <span>
+                Book<span className="hidden sm:inline"> Session</span>
+              </span>
             </button>
-          ) : (
-            /* User Account Popover - ONLY rendered when signed in */
+          )}
+
+          {/* User Account Menu — Only visible when authenticated as Studio Photographer Admin */}
+          {isAuthenticated && currentUser.role === "photographer" && (
             <div className="relative">
               <button
                 id="user-menu-btn"
@@ -266,9 +233,7 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                     {currentUser.full_name.split(" ")[0]}
                   </div>
                   <div className="text-[9px] uppercase font-bold text-[#C59B27] leading-none">
-                    {currentUser.role === "photographer"
-                      ? "Photographer"
-                      : "Customer"}
+                    Studio Admin
                   </div>
                 </div>
                 <ChevronDown className="h-3 w-3 text-[#767471]" />
@@ -285,113 +250,40 @@ export function Header({ currentTab, onNavigate, onOpenAuth }: HeaderProps) {
                       {currentUser.email}
                     </div>
                     <span className="inline-block mt-1 rounded-full bg-[#C59B27]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#997316]">
-                      {currentUser.role === "photographer"
-                        ? "Studio Pro Account"
-                        : "Patron Account"}
+                      Studio Admin
                     </span>
                   </div>
 
-                  {/* Direct navigation options based on role */}
-                  {currentUser.role === "customer" ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("profile");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <User className="h-4 w-4 text-[#C59B27]" />
-                        <span>Manage Profile</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("bookings");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <Calendar className="h-4 w-4 text-[#C59B27]" />
-                        <span>My Bookings</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("saved");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <Heart className="h-4 w-4 text-rose-500" />
-                        <span>Saved Photographers</span>
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("studio-profile");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <Settings className="h-4 w-4 text-[#C59B27]" />
-                        <span>Studio Profile & Gear</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("studio-bookings");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <Calendar className="h-4 w-4 text-[#C59B27]" />
-                        <span>Booking Requests</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onNavigate("studio-portfolio");
-                        }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
-                      >
-                        <Layers className="h-4 w-4 text-[#C59B27]" />
-                        <span>Manage Portfolio</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Role Switch Shortcut */}
-                  {/* <div className="mt-1 pt-1 border-t border-[#F0ECE1]">
-                    <button
-                      onClick={() => {
-                        const nextRole =
-                          currentUser.role === "customer"
-                            ? "photographer"
-                            : "customer";
-                        switchUserRole(nextRole);
-                        setShowUserMenu(false);
-                        onNavigate(
-                          nextRole === "photographer" ? "studio" : "home",
-                        );
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-[#1A1A1A] hover:bg-[#F0ECE1] transition"
-                    >
-                      <div className="flex items-center gap-2">
-                        {currentUser.role === "customer" ? (
-                          <Camera className="h-4 w-4 text-[#C59B27]" />
-                        ) : (
-                          <User className="h-4 w-4 text-[#C59B27]" />
-                        )}
-                        <span>
-                          Switch to{" "}
-                          {currentUser.role === "customer"
-                            ? "Studio Pro"
-                            : "Client Mode"}
-                        </span>
-                      </div>
-                      <ArrowRight className="h-3 w-3 text-[#767471]" />
-                    </button>
-                  </div> */}
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onNavigate("studio-profile");
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
+                  >
+                    <Settings className="h-4 w-4 text-[#C59B27]" />
+                    <span>Studio Profile & Gear</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onNavigate("studio-bookings");
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
+                  >
+                    <Calendar className="h-4 w-4 text-[#C59B27]" />
+                    <span>Booking Requests</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onNavigate("studio-portfolio");
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#1A1A1A] hover:bg-[#FBF9F5] transition"
+                  >
+                    <Layers className="h-4 w-4 text-[#C59B27]" />
+                    <span>Manage Portfolio</span>
+                  </button>
 
                   {/* Sign Out Action */}
                   <div className="mt-1 pt-1 border-t border-[#F0ECE1]">

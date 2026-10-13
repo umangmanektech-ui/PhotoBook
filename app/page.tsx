@@ -1,9 +1,7 @@
 'use client';
 
-import { HomeView } from '@/components/home/HomeView';
-import { useNavigate } from '@/hooks/useNavigate';
+import { StudioHome } from '@/components/home/StudioHome';
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  return <HomeView onNavigate={navigate} />;
+  return <StudioHome />;
 }
