@@ -116,7 +116,7 @@ export function PWAInstaller() {
 
       {/* Floating PWA Install Prompt Banner */}
       {(isInstallable || isIOS) && !isDismissed && (
-        <div className="fixed bottom-20 right-4 z-40 max-w-sm rounded-2xl border border-[#C59B27]/40 bg-[#1A1A1A] p-4 text-[#FBF9F5] shadow-2xl animate-in slide-in-from-bottom-4 sm:bottom-6 sm:right-6">
+        <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 max-w-sm rounded-2xl border border-[#C59B27]/40 bg-[#1A1A1A]/95 backdrop-blur-md p-3.5 sm:p-4 text-[#FBF9F5] shadow-2xl animate-in slide-in-from-bottom-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#C59B27]/20 border border-[#C59B27]/50">

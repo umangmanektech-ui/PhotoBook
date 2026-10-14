@@ -40,7 +40,7 @@ export const STUDIO_PHOTOGRAPHERS: StudioPhotographer[] = [
     name: 'Priya Mehta',
     role: 'associate',
     avatar:
-      'https://images.unsplash.com/photo-1494790108755-2616b9c638ee?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
     coverImage:
       'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1600&q=80',
     bio: 'Priya specialises in natural-light portraiture and intimate couple sessions. Her gentle, unobtrusive approach creates a relaxed atmosphere that lets authentic emotions surface naturally.',

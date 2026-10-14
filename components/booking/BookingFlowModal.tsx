@@ -520,9 +520,9 @@ export function BookingFlowModal({
                     </div>
 
                     {/* Selected Date Summary Banner */}
-                    <div className="mt-4 rounded-xl bg-[#FBF9F5] border border-[#E8E2D2] p-3 text-xs flex items-center justify-between">
+                    <div className="mt-4 rounded-xl bg-[#FBF9F5] border border-[#E8E2D2] p-3 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-[#C59B27]" />
+                        <Calendar className="h-4 w-4 text-[#C59B27] shrink-0" />
                         <span>
                           {rangeEnd ? (
                             <>
@@ -541,7 +541,7 @@ export function BookingFlowModal({
                           )}
                         </span>
                       </div>
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                      <span className="self-start sm:self-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
                         AVAILABLE
                       </span>
                     </div>

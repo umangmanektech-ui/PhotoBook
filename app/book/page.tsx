@@ -25,7 +25,7 @@ function BookPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FBF9F5] pt-3 pb-16 sm:py-8 px-2.5 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E8E2D2]">

@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Crown,
   FileText,
   Info,
   MapPin,
@@ -25,8 +26,10 @@ import {
   Plus,
   ShieldCheck,
   Sparkles,
+  Star,
   TreePine,
   User,
+  Users,
   X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -86,6 +89,7 @@ interface WizardState {
   venueType: 'studio' | 'on-location';
   venueAddress: string;
   date: string;
+  selectedPhotographerId?: string;
   slotAssignments: SlotAssignment[];
   customerName: string;
   customerPhone: string;
@@ -342,7 +346,7 @@ function DateStep({
         </p>
       </div>
 
-      <div className="w-full rounded-2xl border border-[#E8E2D2] bg-white p-4 sm:p-6 shadow-xs">
+      <div className="w-full rounded-2xl border border-[#E8E2D2] bg-white p-3 sm:p-6 shadow-xs">
         {/* Calendar Month Header */}
         <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-[#F0ECE1]">
           <div className="font-serif text-base sm:text-lg font-bold text-[#1A1A1A]">
@@ -430,28 +434,47 @@ function DateStep({
 
         {/* Selected Date Summary Banner */}
         {selectedDate && (
-          <div className="mt-5 rounded-2xl bg-[#FBF9F5] border border-[#E8E2D2] p-3.5 sm:p-4 text-xs flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#C59B27]/10 text-[#C59B27]">
-                <Calendar className="h-4 w-4" />
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-[#767471] tracking-wider block">
-                  Selected Date
+          <div className="mt-4 rounded-2xl bg-gradient-to-r from-[#FFFDF7] to-[#FBF9F5] border-2 border-[#C59B27]/40 p-3.5 sm:p-4 shadow-xs">
+            {/* Top row: Label + Status Badge */}
+            <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-[#F0ECE1]">
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#C59B27]/15 text-[#997316]">
+                  <Calendar className="h-3 w-3" />
                 </span>
-                <strong className="text-sm font-serif font-bold text-[#1A1A1A]">
+                <span className="text-[10px] sm:text-[11px] uppercase font-bold text-[#767471] tracking-wider">
+                  Selected Event Date
+                </span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-800 shadow-xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Available Today
+              </span>
+            </div>
+
+            {/* Main Date row: Generous, crisp, zero wrapping */}
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-[#1A1A1A] text-[#C59B27] shadow-xs">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-[#C59B27] leading-none">
+                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}
+                </span>
+                <span className="text-base font-bold font-serif text-white leading-none mt-0.5">
+                  {new Date(selectedDate + 'T00:00:00').getDate()}
+                </span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-serif text-base sm:text-lg font-bold text-[#1A1A1A] leading-snug">
                   {formatDate(selectedDate)}
-                </strong>
+                </div>
+                <div className="text-[11px] text-[#767471] mt-0.5 font-medium">
+                  Continuous multi-hour slots ready for selection
+                </div>
               </div>
             </div>
-            <span className="rounded-full bg-emerald-100 border border-emerald-200 px-3 py-1 text-[10px] font-bold text-emerald-800">
-              AVAILABLE
-            </span>
           </div>
         )}
 
         {/* Trust Guarantee Note */}
-        <div className="mt-3 rounded-xl bg-[#F0ECE1]/50 p-3 text-xs text-[#52504E] flex items-center gap-2">
+        <div className="mt-3 rounded-xl bg-[#F0ECE1]/40 p-2.5 sm:p-3 text-[11px] sm:text-xs text-[#52504E] flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-[#2D6A4F] shrink-0" />
           <span>
             No double-booking policy: Once confirmed, this date &amp; time is reserved exclusively
@@ -460,7 +483,7 @@ function DateStep({
         </div>
 
         {/* Calendar Legend */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[11px] text-[#767471] border-t border-[#F0ECE1] pt-3">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[10px] sm:text-[11px] text-[#767471] border-t border-[#F0ECE1] pt-2.5">
           <span className="flex items-center gap-1.5">
             <span className="h-3 w-3 rounded-md bg-[#FBF9F5] border border-[#E8E2D2] inline-block" />
             Available
@@ -481,34 +504,93 @@ function DateStep({
   );
 }
 
-// ─── Step 3: Slot Picker (Strict Continuous Multi-Slot Selection) ───────────────
+function PhotographerAvatar({
+  name,
+  src,
+  size = 48,
+  className = '',
+}: {
+  name: string;
+  src: string;
+  size?: number;
+  className?: string;
+}) {
+  const [error, setError] = useState(false);
+  const initials = name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  if (error || !src) {
+    return (
+      <div
+        style={{ width: size, height: size }}
+        className={`shrink-0 rounded-2xl bg-gradient-to-tr from-[#1A1A1A] to-[#383531] text-[#C59B27] flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-xs ${className}`}
+      >
+        {initials}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      style={{ width: size, height: size }}
+      onError={() => setError(true)}
+      className={`shrink-0 rounded-2xl object-cover ring-2 ring-white shadow-xs bg-[#F0ECE1] ${className}`}
+    />
+  );
+}
+
+// ─── Step 3: Slot Picker (Separate Lead & Associate Photographer Views) ──────
 
 function SlotStep({
   date,
   service,
   slotAssignments,
+  selectedPhotographerId,
+  onSelectPhotographer,
   onSlotClick,
-  onChangeSlotPhotographer,
-  onApplyPhotographerToAll,
   onSelectDuration,
   onClearSlots,
 }: {
   date: string;
   service: Service | null;
   slotAssignments: SlotAssignment[];
-  onSlotClick: (slotId: string) => void;
-  onChangeSlotPhotographer: (slotId: string, photographerId: string) => void;
-  onApplyPhotographerToAll: (photographerId: string) => void;
-  onSelectDuration: (hours: number) => void;
+  selectedPhotographerId: string;
+  onSelectPhotographer: (photographerId: string) => void;
+  onSlotClick: (slotId: string, photographerId: string) => void;
+  onSelectDuration: (hours: number, photographerId: string) => void;
   onClearSlots: () => void;
 }) {
   const { getBookedSlots } = useStudio();
-  const [openPhotogPickerSlotId, setOpenPhotogPickerSlotId] = useState<string | null>(null);
 
-  const mainBooked = getBookedSlots(MAIN_PHOTOGRAPHER.id, date);
+  const isLeadSelected = selectedPhotographerId === MAIN_PHOTOGRAPHER.id;
+  const activePhotographer =
+    STUDIO_PHOTOGRAPHERS.find((p) => p.id === selectedPhotographerId) || MAIN_PHOTOGRAPHER;
+
+  // Booked slots calculations for today
+  const leadBooked = getBookedSlots(MAIN_PHOTOGRAPHER.id, date);
+  const leadFreeSlotsCount = TIME_SLOTS.filter((s) => !leadBooked.includes(s.id)).length;
+
+  const associateFreeSlotsMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const assoc of ASSOCIATE_PHOTOGRAPHERS) {
+      const booked = getBookedSlots(assoc.id, date);
+      map[assoc.id] = TIME_SLOTS.filter((s) => !booked.includes(s.id)).length;
+    }
+    return map;
+  }, [date, getBookedSlots]);
+
+  const totalAssocFreeSlots = Object.values(associateFreeSlotsMap).reduce((a, b) => a + b, 0);
+
+  // Active photographer booked slots
+  const activeBooked = getBookedSlots(activePhotographer.id, date);
+
   const rangeSummary = getContinuousRangeSummary(slotAssignments);
-
-  const getAssignment = (slotId: string) => slotAssignments.find((a) => a.slotId === slotId);
 
   const sortedSelectedIndices = useMemo(() => {
     return slotAssignments
@@ -528,28 +610,347 @@ function SlotStep({
   const extraHoursTotal = extraHours * hourlyRate;
   const sessionTotal = basePrice + extraHoursTotal;
 
-  const durationOptions = useMemo(() => {
-    const list: number[] = [];
-    if (baseSlots > 2) {
-      list.push(baseSlots - 2, baseSlots - 1);
+  const handleSelectLead = () => {
+    onSelectPhotographer(MAIN_PHOTOGRAPHER.id);
+  };
+
+  const handleSelectAssociate = (assocId?: string) => {
+    if (assocId) {
+      onSelectPhotographer(assocId);
+      return;
     }
-    list.push(baseSlots, baseSlots + 1, baseSlots + 2, baseSlots + 3, baseSlots + 4);
-    return Array.from(new Set(list))
-      .filter((h) => h >= 1 && h <= 10)
-      .sort((a, b) => a - b);
-  }, [baseSlots]);
+    if (ASSOCIATE_PHOTOGRAPHERS.some((p) => p.id === selectedPhotographerId)) {
+      return;
+    }
+    const sorted = [...ASSOCIATE_PHOTOGRAPHERS].sort(
+      (a, b) => (associateFreeSlotsMap[b.id] || 0) - (associateFreeSlotsMap[a.id] || 0),
+    );
+    onSelectPhotographer(sorted[0]?.id || ASSOCIATE_PHOTOGRAPHERS[0].id);
+  };
 
   return (
-    <div className="space-y-5">
-      <div className="text-center mb-2">
+    <div className="space-y-6">
+      <div className="text-center mb-1">
         <h2 className="font-serif text-2xl font-bold text-[#1A1A1A]">Select Time Slots</h2>
         <p className="text-xs sm:text-sm text-[#767471] mt-1">
-          {formatDate(date)} — multi-slot bookings must be{' '}
-          <strong className="text-[#1A1A1A]">continuous hours</strong> with no gap.
+          {formatDate(date)} — choose your artist category and reserve continuous hours.
         </p>
       </div>
 
-      {/* Dynamic Service Base Duration & Hourly Pricing Header Card */}
+      {/* ─── 1. Separate Photographer Category Selector: Lead vs Associates ─── */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+          <label className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-[#C59B27]" />
+            Photographer Category
+          </label>
+          <span className="text-[11px] text-[#767471]">
+            Tap to switch category &amp; inspect individual real-time availability
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          {/* Card 1: Lead Artist — Arjun Kumar */}
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={handleSelectLead}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectLead();
+              }
+            }}
+            className={`group relative rounded-2xl p-4 sm:p-5 border-2 transition-all cursor-pointer flex flex-col justify-between ${
+              isLeadSelected
+                ? 'border-[#C59B27] bg-[#FFFDF7] shadow-sm ring-1 ring-[#C59B27]/30'
+                : 'border-[#E8E2D2] bg-white hover:border-[#C59B27]/60 hover:bg-[#FBF9F5]'
+            }`}
+          >
+            <div>
+              {/* Header: Category Badge + Selection Status */}
+              <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[#F0ECE1]">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-2.5 py-1 text-[10px] font-bold text-[#C59B27] uppercase tracking-wider shadow-xs">
+                  <Crown className="h-3 w-3 text-[#C59B27]" />
+                  Lead Master Artist
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  {isLeadSelected ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#C59B27]/15 px-2.5 py-0.5 text-[11px] font-bold text-[#997316] border border-[#C59B27]/40">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                      Selected
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-medium text-[#767471] group-hover:text-[#1A1A1A] transition-colors flex items-center gap-1">
+                      Select <ArrowRight className="h-3 w-3" />
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Profile Details */}
+              <div className="flex items-start gap-3.5">
+                <div className="relative shrink-0">
+                  <PhotographerAvatar
+                    name={MAIN_PHOTOGRAPHER.name}
+                    src={MAIN_PHOTOGRAPHER.avatar}
+                    size={52}
+                    className="ring-2 ring-[#C59B27]/40 shadow-xs"
+                  />
+                  <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#C59B27] text-[#1A1A1A] shadow-xs">
+                    <Crown className="h-2.5 w-2.5 stroke-[2.5]" />
+                  </div>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A1A] leading-snug">
+                    {MAIN_PHOTOGRAPHER.name}
+                  </h3>
+                  <p className="text-xs text-[#767471] font-medium mt-0.5">
+                    Founder &amp; Creative Director
+                  </p>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#767471]">
+                    <span className="flex items-center gap-1 font-semibold text-[#1A1A1A]">
+                      <Star className="h-3.5 w-3.5 fill-[#C59B27] text-[#C59B27]" />
+                      {MAIN_PHOTOGRAPHER.rating} ({MAIN_PHOTOGRAPHER.reviewCount})
+                    </span>
+                    <span>•</span>
+                    <span>8+ yrs exp</span>
+                    <span>•</span>
+                    <span className="text-[#997316] font-semibold">Vogue Featured</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Availability Status */}
+            <div className="mt-4 pt-3 border-t border-[#F0ECE1] flex items-center justify-between text-xs">
+              {leadFreeSlotsCount > 0 ? (
+                <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200/60">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  {leadFreeSlotsCount} slots open today
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/60">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  Fully booked today
+                </span>
+              )}
+              <span className="text-[11px] font-medium text-[#767471]">Signature Direction</span>
+            </div>
+          </div>
+
+          {/* Card 2: Associate Photographers — Priya & Rohit */}
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => handleSelectAssociate()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectAssociate();
+              }
+            }}
+            className={`group relative rounded-2xl p-4 sm:p-5 border-2 transition-all cursor-pointer flex flex-col justify-between ${
+              !isLeadSelected
+                ? 'border-[#C59B27] bg-[#FFFDF7] shadow-sm ring-1 ring-[#C59B27]/30'
+                : 'border-[#E8E2D2] bg-white hover:border-[#C59B27]/60 hover:bg-[#FBF9F5]'
+            }`}
+          >
+            <div>
+              {/* Header: Category Badge + Selection Status */}
+              <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[#F0ECE1]">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFECE5] px-2.5 py-1 text-[10px] font-bold text-[#52504E] uppercase tracking-wider">
+                  <Users className="h-3 w-3 text-[#52504E]" />
+                  Associate Artists
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  {!isLeadSelected ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#C59B27]/15 px-2.5 py-0.5 text-[11px] font-bold text-[#997316] border border-[#C59B27]/40">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                      Selected
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-medium text-[#767471] group-hover:text-[#1A1A1A] transition-colors flex items-center gap-1">
+                      Select <ArrowRight className="h-3 w-3" />
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Profile Details */}
+              <div className="flex items-start gap-3.5">
+                <div className="flex -space-x-3 shrink-0">
+                  {ASSOCIATE_PHOTOGRAPHERS.map((assoc, idx) => (
+                    <PhotographerAvatar
+                      key={assoc.id}
+                      name={assoc.name}
+                      src={assoc.avatar}
+                      size={52}
+                      className={`ring-2 ring-white shadow-xs ${idx === 0 ? 'z-10' : 'z-0'}`}
+                    />
+                  ))}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A1A] leading-snug">
+                    Associate Artists
+                  </h3>
+                  <p className="text-xs text-[#767471] font-medium mt-0.5">
+                    Priya Mehta &amp; Rohit Shah
+                  </p>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#767471]">
+                    <span className="flex items-center gap-1 font-semibold text-[#1A1A1A]">
+                      <Star className="h-3.5 w-3.5 fill-[#C59B27] text-[#C59B27]" />
+                      4.8 Avg Rating
+                    </span>
+                    <span>•</span>
+                    <span>4–5 yrs exp</span>
+                    <span>•</span>
+                    <span className="text-emerald-700 font-semibold">Trained by Arjun</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Availability Status */}
+            <div className="mt-4 pt-3 border-t border-[#F0ECE1] flex items-center justify-between text-xs">
+              {totalAssocFreeSlots > 0 ? (
+                <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200/60">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  {totalAssocFreeSlots} slots across team
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/60">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  Fully booked today
+                </span>
+              )}
+              <span className="text-[11px] font-medium text-[#767471]">Studio Certified</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── Sub-Selector: When Associate Artists is active ─── */}
+        {!isLeadSelected && (
+          <div className="rounded-2xl bg-gradient-to-b from-[#FBF9F5] to-[#F7F3EA] border border-[#E8E2D2] p-4 sm:p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-[#1A1A1A] uppercase tracking-wider text-[11px]">
+                <Users className="h-3.5 w-3.5 text-[#C59B27]" />
+                <span>Select Individual Associate Artist:</span>
+              </div>
+              <span className="text-[#767471] text-[11px]">
+                Switch between artists to inspect individual schedule &amp; reserve hours
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {ASSOCIATE_PHOTOGRAPHERS.map((assoc) => {
+                const isThisAssoc = selectedPhotographerId === assoc.id;
+                const freeCount = associateFreeSlotsMap[assoc.id] || 0;
+                return (
+                  <button
+                    key={assoc.id}
+                    type="button"
+                    onClick={() => handleSelectAssociate(assoc.id)}
+                    className={`flex items-center justify-between gap-3 rounded-xl p-3 text-left border transition-all ${
+                      isThisAssoc
+                        ? 'border-[#C59B27] bg-white shadow-xs ring-1 ring-[#C59B27]/40'
+                        : 'border-[#E8E2D2] bg-white/70 hover:border-[#C59B27]/50 hover:bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <PhotographerAvatar
+                        name={assoc.name}
+                        src={assoc.avatar}
+                        size={40}
+                        className="ring-2 ring-white shadow-xs"
+                      />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs sm:text-sm text-[#1A1A1A] truncate">
+                            {assoc.name}
+                          </span>
+                          {isThisAssoc && (
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C59B27]" />
+                          )}
+                        </div>
+                        <div className="text-[11px] text-[#767471] truncate mt-0.5">
+                          {assoc.specialties.slice(0, 2).join(', ')} · {assoc.rating} ★
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          freeCount > 0
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        {freeCount > 0 ? `${freeCount} Open` : 'Booked'}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ─── 2. Active Artist Bio Ribbon (Redesigned Elegant Banner) ─── */}
+      <div className="rounded-2xl border border-[#C59B27]/30 bg-gradient-to-r from-[#FFFDF7] via-[#FAF7F0] to-[#FFFDF7] p-4 sm:p-5 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+          <div className="flex items-start sm:items-center gap-3 min-w-0">
+            <PhotographerAvatar
+              name={activePhotographer.name}
+              src={activePhotographer.avatar}
+              size={44}
+              className="ring-2 ring-[#C59B27]/40 shadow-xs"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#767471]">
+                  Viewing Slots For
+                </span>
+                <span className="text-[#C59B27] font-bold">•</span>
+                <span className="font-serif font-bold text-sm sm:text-base text-[#1A1A1A]">
+                  {activePhotographer.name}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#1A1A1A] px-2 py-0.5 text-[9px] font-bold text-[#C59B27] uppercase tracking-wider">
+                  {activePhotographer.role === 'main' ? 'Lead Master' : 'Associate Artist'}
+                </span>
+                <span className="text-xs text-[#767471]">
+                  ({activePhotographer.experience}+ yrs exp)
+                </span>
+              </div>
+              <p className="text-xs text-[#52504E] italic mt-1 leading-relaxed">
+                &ldquo;{activePhotographer.shortBio}&rdquo;
+              </p>
+            </div>
+          </div>
+
+          <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E8E2D2]/60 shrink-0">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 border border-[#C59B27]/30 text-[#997316] text-[11px] font-semibold shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-[#C59B27]" />
+              <span>
+                {activePhotographer.role === 'main' ? 'Direct Master Direction' : 'Studio Certified'}
+              </span>
+            </div>
+            <span className="text-[10px] text-[#767471] font-medium sm:text-right">
+              Continuous {baseSlots}-hr base block
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 3. Dynamic Service Base Duration & Hourly Pricing Header Card ─── */}
       <div className="rounded-2xl border border-[#C59B27]/40 bg-[#FFFDF7] p-4 sm:p-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -577,72 +978,9 @@ function SlotStep({
             </div>
           </div>
         </div>
-
-        {/* Interactive Duration Stepper & Quick Options */}
-        <div className="mt-4 pt-3.5 border-t border-[#E8E2D2]/80">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs font-bold text-[#1A1A1A]">Session Duration:</span>
-              <div className="inline-flex items-center gap-1 rounded-xl border border-[#D9D2C2] bg-white p-1 shadow-2xs">
-                <button
-                  type="button"
-                  disabled={currentHours <= 1}
-                  onClick={() => onSelectDuration(Math.max(1, currentHours - 1))}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold hover:bg-[#F0ECE1] disabled:opacity-30 disabled:cursor-not-allowed transition"
-                  title="Decrease 1 hour"
-                >
-                  -
-                </button>
-                <div className="px-2.5 text-xs font-bold text-[#1A1A1A] min-w-[70px] text-center">
-                  {currentHours || baseSlots} {currentHours === 1 ? 'Hour' : 'Hours'}
-                </div>
-                <button
-                  type="button"
-                  disabled={currentHours >= 10}
-                  onClick={() => onSelectDuration(Math.min(10, (currentHours || baseSlots) + 1))}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold hover:bg-[#F0ECE1] disabled:opacity-30 disabled:cursor-not-allowed transition"
-                  title="Add 1 hour (+₹hourlyRate)"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Preset Pills */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              {durationOptions.map((hrs) => {
-                const isBase = hrs === baseSlots;
-                const extra = Math.max(0, hrs - baseSlots);
-                const isSelected = currentHours === hrs;
-                return (
-                  <button
-                    key={hrs}
-                    type="button"
-                    onClick={() => onSelectDuration(hrs)}
-                    className={`rounded-xl px-2.5 py-1 text-xs font-bold transition ${
-                      isSelected
-                        ? 'bg-[#1A1A1A] text-white shadow-xs'
-                        : isBase
-                        ? 'border border-[#C59B27] bg-[#FFF8E7] text-[#997316] hover:bg-[#C59B27] hover:text-[#1A1A1A]'
-                        : 'border border-[#E8E2D2] bg-white text-[#52504E] hover:border-[#C59B27]'
-                    }`}
-                  >
-                    <span>{hrs}h</span>
-                    {isBase && <span className="text-[10px] ml-1 font-semibold opacity-90">(Base)</span>}
-                    {extra > 0 && (
-                      <span className="text-[10px] ml-1 text-[#C59B27] font-semibold">
-                        (+₹{(extra * hourlyRate).toLocaleString('en-IN')})
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Continuity Session Status Bar with Live Pricing */}
+      {/* ─── 4. Continuity Session Status Bar with Live Pricing ─── */}
       {slotAssignments.length > 0 && rangeSummary ? (
         <div
           className={`rounded-2xl p-4 border transition-all ${
@@ -678,17 +1016,22 @@ function SlotStep({
                     {rangeSummary.totalHours === 1 ? 'Hour' : 'Consecutive Hours'}
                   </span>
                 </div>
-                <div className="font-serif text-base sm:text-lg font-bold mt-0.5">
-                  {rangeSummary.startTime} – {rangeSummary.endTime}
+                <div className="mt-0.5">
+                  <div className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
+                    {rangeSummary.startTime} – {rangeSummary.endTime}
+                  </div>
+                  <div className="text-xs font-sans font-medium text-[#C59B27] mt-0.5">
+                    with {activePhotographer.name}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 self-end sm:self-center">
+            <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
               <button
                 type="button"
                 onClick={onClearSlots}
-                className="text-xs text-[#E8E2D2] hover:text-white underline px-2 py-1"
+                className="text-xs font-semibold text-[#E8E2D2] hover:text-white bg-white/10 hover:bg-white/20 transition px-3 py-1.5 rounded-lg border border-white/10"
               >
                 Reset
               </button>
@@ -732,219 +1075,164 @@ function SlotStep({
         /* Empty Prompt */
         <div className="rounded-2xl bg-[#FBF9F5] border border-[#E8E2D2] p-4 text-center">
           <p className="text-xs font-medium text-[#767471]">
-            Tap any starting hour below to reserve your <strong>{baseSlots}-hour continuous session</strong>:
+            Tap any starting hour below to reserve your <strong>{baseSlots}-hour continuous session</strong> with{' '}
+            <strong className="text-[#1A1A1A]">{activePhotographer.name}</strong>:
           </p>
         </div>
       )}
 
-      {/* Time Slots List with Continuous Visual Connectors */}
-      <div className="space-y-2">
-        {TIME_SLOTS.map((slot, index) => {
-          const assignment = getAssignment(slot.id);
-          const isSelected = !!assignment;
-          const isMainBooked = mainBooked.includes(slot.id);
-
-          const availablePhotographers = STUDIO_PHOTOGRAPHERS.filter((p) => {
-            const booked = getBookedSlots(p.id, date);
-            return !booked.includes(slot.id);
-          });
-          const allBooked = availablePhotographers.length === 0;
-
-          const isFirstInBlock = isSelected && index === minSelectedIdx;
-          const isLastInBlock = isSelected && index === maxSelectedIdx;
-          const isAdjacentToBlock =
-            !isSelected &&
-            !allBooked &&
-            (index === minSelectedIdx - 1 || index === maxSelectedIdx + 1);
-
-          const hourIndexInBlock = sortedSelectedIndices.indexOf(index) + 1;
-          const isExtraHour = isSelected && hourIndexInBlock > baseSlots;
-
-          return (
-            <div
-              key={slot.id}
-              onClick={() => {
-                if (!allBooked) {
-                  onSlotClick(slot.id);
-                }
-              }}
-              className={`rounded-2xl border-2 transition-all ${
-                allBooked
-                  ? 'border-[#E8E2D2] bg-[#F9F8F6] opacity-60 cursor-not-allowed'
-                  : 'cursor-pointer'
-              } ${
-                isSelected
-                  ? 'border-[#C59B27] bg-[#FFFDF7] shadow-xs ring-1 ring-[#C59B27]/20'
-                  : isAdjacentToBlock
-                  ? 'border-[#E8E2D2] bg-white hover:border-[#C59B27]/60 hover:bg-[#FFFDF7]/50'
-                  : 'border-[#E8E2D2] bg-white hover:border-[#D9D2C2] hover:bg-[#FBF9F5]'
-              }`}
+      {/* ─── 5. Time Slots List for Active Photographer ─── */}
+      {activeBooked.length >= TIME_SLOTS.length ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-6 text-center space-y-3">
+          <AlertCircle className="h-8 w-8 text-amber-600 mx-auto" />
+          <div>
+            <h4 className="font-serif font-bold text-base text-amber-950">
+              {activePhotographer.name} is fully booked on {formatDate(date)}
+            </h4>
+            <p className="text-xs text-amber-800 mt-1 max-w-md mx-auto">
+              {isLeadSelected && totalAssocFreeSlots > 0
+                ? 'Good news! Our certified Associate Photographers (Priya Mehta & Rohit Shah) have open slots on this date.'
+                : 'Please select another date in the calendar or choose a different photographer above.'}
+            </p>
+          </div>
+          {isLeadSelected && totalAssocFreeSlots > 0 && (
+            <button
+              type="button"
+              onClick={() => handleSelectAssociate()}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#C59B27] px-4 py-2.5 text-xs font-bold text-[#1A1A1A] hover:bg-[#b0881f] transition shadow-xs"
             >
-              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 p-3.5 pl-4 sm:pl-5">
-                <div className="min-w-[120px] sm:min-w-[140px] shrink-0">
-                  <div
-                    className={`text-sm font-bold ${
-                      isSelected
-                        ? 'text-[#C59B27]'
-                        : allBooked
-                        ? 'text-[#B0AAA0]'
-                        : 'text-[#1A1A1A]'
-                    }`}
-                  >
-                    {slot.label}
-                  </div>
-                  <div className="text-[10px] text-[#767471]">{getSlotInterval(slot.id)}</div>
-                </div>
+              <span>View Associate Photographers Availability</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {TIME_SLOTS.map((slot, index) => {
+            const isSelected = slotAssignments.some((a) => a.slotId === slot.id);
+            const isBooked = activeBooked.includes(slot.id);
 
-                <div className="flex-1 min-w-[150px]">
-                  {isSelected ? (
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                          isExtraHour
-                            ? 'bg-[#C59B27]/20 text-[#997316] border border-[#C59B27]/40'
-                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                        }`}
-                      >
-                        {isExtraHour
-                          ? `Hour ${hourIndexInBlock} · Extra (+₹${hourlyRate.toLocaleString('en-IN')})`
-                          : `Hour ${hourIndexInBlock} of ${baseSlots} · Included in Base`}
-                      </span>
-                    </div>
-                  ) : allBooked ? (
-                    <span className="text-xs text-[#B0AAA0] font-medium">Fully booked</span>
-                  ) : isMainBooked ? (
-                    <span className="text-xs text-amber-700 flex items-center gap-1 font-medium">
-                      <Info className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-                      <span className="truncate">
-                        {MAIN_PHOTOGRAPHER.name} busy · Associates available
-                      </span>
-                    </span>
-                  ) : (
-                    <span className="text-xs text-emerald-700 flex items-center gap-1 font-medium">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block shrink-0" />
-                      <span className="truncate">
-                        Lead Photographer {MAIN_PHOTOGRAPHER.name} available
-                      </span>
-                    </span>
-                  )}
-                </div>
+            const isFirstInBlock = isSelected && index === minSelectedIdx;
+            const isLastInBlock = isSelected && index === maxSelectedIdx;
+            const isAdjacentToBlock =
+              !isSelected &&
+              !isBooked &&
+              (index === minSelectedIdx - 1 || index === maxSelectedIdx + 1);
 
-                <div className="flex items-center gap-2.5 shrink-0 ml-auto sm:ml-0">
-                  {isSelected && assignment && (
-                    <div className="flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-2.5 py-1 text-[11px] font-bold text-white shrink-0">
-                      <Camera className="h-3 w-3 text-[#C59B27]" />
-                      <span>
-                        {STUDIO_PHOTOGRAPHERS.find((p) => p.id === assignment.photographerId)?.name}
-                      </span>
-                    </div>
-                  )}
+            const hourIndexInBlock = sortedSelectedIndices.indexOf(index) + 1;
+            const isExtraHour = isSelected && hourIndexInBlock > baseSlots;
 
-                  {isSelected && availablePhotographers.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenPhotogPickerSlotId(
-                          openPhotogPickerSlotId === slot.id ? null : slot.id,
-                        );
-                      }}
-                      className="text-[11px] font-semibold text-[#997316] hover:text-[#C59B27] underline whitespace-nowrap"
-                    >
-                      Change Artist
-                    </button>
-                  )}
-
-                  {!allBooked && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSlotClick(slot.id);
-                      }}
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border-2 transition-all ${
+            return (
+              <div
+                key={slot.id}
+                onClick={() => {
+                  if (!isBooked) {
+                    onSlotClick(slot.id, activePhotographer.id);
+                  }
+                }}
+                className={`group relative rounded-2xl border-2 transition-all duration-150 ${
+                  isBooked
+                    ? 'border-[#EBE7DE] bg-[#F8F6F1] opacity-60 cursor-not-allowed'
+                    : 'cursor-pointer active:scale-[0.99]'
+                } ${
+                  isSelected
+                    ? 'border-[#C59B27] bg-[#FFFDF7] shadow-sm ring-2 ring-[#C59B27]/25'
+                    : isAdjacentToBlock
+                    ? 'border-[#C59B27]/40 bg-white hover:border-[#C59B27] hover:bg-[#FFFDF7]/60 shadow-xs'
+                    : 'border-[#E8E2D2] bg-white hover:border-[#C59B27]/50 hover:bg-[#FBF9F5]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 p-4 sm:p-5">
+                  {/* Time Section: Prominent, legible & elegant serif display */}
+                  <div className="shrink-0 min-w-[90px] sm:min-w-[110px]">
+                    <div
+                      className={`font-serif text-lg sm:text-xl font-bold tracking-tight transition-colors ${
                         isSelected
-                          ? 'border-[#C59B27] bg-[#C59B27] text-[#1A1A1A] shadow-xs'
-                          : isAdjacentToBlock
-                          ? 'border-[#C59B27]/40 bg-[#FFFDF7] text-[#C59B27] hover:border-[#C59B27] hover:bg-[#C59B27] hover:text-[#1A1A1A]'
-                          : 'border-[#D9D2C2] bg-white text-[#767471] hover:border-[#C59B27]'
+                          ? 'text-[#C59B27]'
+                          : isBooked
+                          ? 'text-[#A8A49C]'
+                          : 'text-[#1A1A1A]'
                       }`}
                     >
-                      {isSelected ? (
-                        <Check className="h-4 w-4 stroke-[3]" />
-                      ) : (
-                        <span className="text-xs font-bold">+</span>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {isSelected && openPhotogPickerSlotId === slot.id && (
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="border-t border-[#F0ECE1] p-3.5 bg-[#FFFBF0] rounded-b-2xl cursor-default"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold text-[#767471] uppercase tracking-wider">
-                      Select Photographer for {slot.label}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setOpenPhotogPickerSlotId(null)}
-                      className="text-xs text-[#767471] hover:text-[#1A1A1A]"
-                    >
-                      Close
-                    </button>
+                      {slot.label}
+                    </div>
+                    <div className="text-xs text-[#767471] font-medium mt-0.5">
+                      {getSlotInterval(slot.id)}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {availablePhotographers.map((photog) => (
-                      <button
-                        key={photog.id}
-                        type="button"
-                        onClick={() => {
-                          onChangeSlotPhotographer(slot.id, photog.id);
-                          setOpenPhotogPickerSlotId(null);
-                        }}
-                        className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
-                          assignment?.photographerId === photog.id
-                            ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                            : 'border-[#E8E2D2] bg-white text-[#1A1A1A] hover:border-[#C59B27]'
+
+                  {/* Status / Badge Section: Beautifully responsive with zero clumsy wrapping */}
+                  <div className="flex-1 min-w-0 flex items-center justify-center px-1">
+                    {isSelected ? (
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 text-xs font-bold shadow-xs truncate max-w-full ${
+                          isExtraHour
+                            ? 'bg-[#C59B27]/20 text-[#997316] border border-[#C59B27]/40'
+                            : 'bg-emerald-100 text-emerald-900 border border-emerald-300/80'
                         }`}
                       >
-                        <img
-                          src={photog.avatar}
-                          alt={photog.name}
-                          className="h-5 w-5 rounded-full object-cover"
-                        />
-                        <span>{photog.name}</span>
-                        {photog.role === 'main' && (
-                          <span className="text-[9px] text-[#C59B27] font-bold">(Lead)</span>
-                        )}
-                      </button>
-                    ))}
+                        <Sparkles className="h-3 w-3 text-[#C59B27] shrink-0" />
+                        <span className="truncate">
+                          {isExtraHour
+                            ? `Hour ${hourIndexInBlock} · Extra (+₹${hourlyRate.toLocaleString('en-IN')})`
+                            : `Hour ${hourIndexInBlock} of ${baseSlots} · Included`}
+                        </span>
+                      </span>
+                    ) : isBooked ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFECE5] px-2.5 py-1 text-xs font-medium text-[#8C887E]">
+                        <X className="h-3 w-3 shrink-0 text-[#A8A49C]" />
+                        <span>Booked</span>
+                        <span className="hidden sm:inline text-[#A8A49C]">
+                          · {activePhotographer.name}
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 sm:px-3 py-1 text-xs font-semibold text-emerald-800 shadow-xs">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+                        <span>Available</span>
+                        <span className="hidden sm:inline font-normal text-emerald-700/90">
+                          · {activePhotographer.name}
+                        </span>
+                      </span>
+                    )}
                   </div>
 
-                  {slotAssignments.length > 1 && assignment && (
-                    <div className="mt-2.5 pt-2 border-t border-[#E8E2D2]/60">
+                  {/* Action Button: Generous mobile tap target */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {!isBooked ? (
                       <button
                         type="button"
-                        onClick={() => {
-                          onApplyPhotographerToAll(assignment.photographerId);
-                          setOpenPhotogPickerSlotId(null);
+                        aria-label={isSelected ? `Deselect ${slot.label}` : `Select ${slot.label}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSlotClick(slot.id, activePhotographer.id);
                         }}
-                        className="text-[11px] font-bold text-[#C59B27] hover:underline"
+                        className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border-2 transition-all ${
+                          isSelected
+                            ? 'border-[#C59B27] bg-[#C59B27] text-[#1A1A1A] shadow-xs'
+                            : isAdjacentToBlock
+                            ? 'border-[#C59B27] bg-[#FFFDF7] text-[#C59B27] hover:bg-[#C59B27] hover:text-[#1A1A1A]'
+                            : 'border-[#D9D2C2] bg-white text-[#767471] group-hover:border-[#C59B27] group-hover:text-[#1A1A1A]'
+                        }`}
                       >
-                        Apply {STUDIO_PHOTOGRAPHERS.find((p) => p.id === assignment.photographerId)?.name} to all {slotAssignments.length} slots
+                        {isSelected ? (
+                          <Check className="h-4 w-4 sm:h-5 sm:w-5 stroke-[3]" />
+                        ) : (
+                          <span className="text-base sm:text-lg font-bold leading-none">+</span>
+                        )}
                       </button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-[#EFECE5]/60 text-[#A8A49C]">
+                        <span className="text-xs font-medium">—</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -1236,6 +1524,7 @@ export function BookingWizard({
     venueType: 'studio',
     venueAddress: '',
     date: '',
+    selectedPhotographerId: initialPhotographerId || MAIN_PHOTOGRAPHER.id,
     slotAssignments: [],
     customerName: isAuthenticated ? currentUser.full_name : '',
     customerPhone: isAuthenticated ? currentUser.phone ?? '' : '',
@@ -1273,6 +1562,16 @@ export function BookingWizard({
       }
     }
   }, [initialServiceId]);
+
+  // Sync initialPhotographerId when prop arrives or changes
+  useEffect(() => {
+    if (initialPhotographerId) {
+      setState((prev) => ({
+        ...prev,
+        selectedPhotographerId: initialPhotographerId,
+      }));
+    }
+  }, [initialPhotographerId]);
 
   // Track current step in a ref so the back handler callback never re-registers unnecessarily
   const stepRef = useRef(state.step);
@@ -1330,79 +1629,94 @@ export function BookingWizard({
 
   // ─── Continuous Slot Selection Algorithm ───────────────────────────────────
 
-  const handleSlotClick = (slotId: string) => {
+  const handleSelectPhotographer = (photographerId: string) => {
+    setState((prev) => {
+      const prevPhotogId = prev.selectedPhotographerId || MAIN_PHOTOGRAPHER.id;
+      if (prevPhotogId === photographerId) return prev;
+
+      // Check if current slot assignments can be moved to the new photographer
+      if (prev.slotAssignments.length > 0) {
+        const slotIds = prev.slotAssignments.map((a) => a.slotId);
+        const booked = getBookedSlots(photographerId, prev.date);
+        const allFree = slotIds.every((sId) => !booked.includes(sId));
+
+        if (allFree) {
+          // Keep exact same slots, just reassign photographer
+          return {
+            ...prev,
+            selectedPhotographerId: photographerId,
+            slotAssignments: slotIds.map((sId) => ({ slotId: sId, photographerId })),
+          };
+        } else {
+          // Try to find first continuous block of same duration for new photographer
+          const neededHours = prev.slotAssignments.length;
+          let newSlots: SlotAssignment[] = [];
+          for (let i = 0; i <= TIME_SLOTS.length - neededHours; i++) {
+            const slice = TIME_SLOTS.slice(i, i + neededHours).map((s) => s.id);
+            if (slice.every((sId) => !booked.includes(sId))) {
+              newSlots = slice.map((sId) => ({ slotId: sId, photographerId }));
+              break;
+            }
+          }
+          return {
+            ...prev,
+            selectedPhotographerId: photographerId,
+            slotAssignments: newSlots,
+          };
+        }
+      }
+
+      return {
+        ...prev,
+        selectedPhotographerId: photographerId,
+      };
+    });
+  };
+
+  const handleSlotClick = (slotId: string, photographerId?: string) => {
+    const activePhotogId = photographerId || state.selectedPhotographerId || MAIN_PHOTOGRAPHER.id;
     const targetIdx = TIME_SLOTS.findIndex((s) => s.id === slotId);
     if (targetIdx === -1) return;
 
-    const availableForTarget = STUDIO_PHOTOGRAPHERS.filter((p) => {
-      const booked = getBookedSlots(p.id, state.date);
-      return !booked.includes(slotId);
-    });
-    if (availableForTarget.length === 0) return;
+    const booked = getBookedSlots(activePhotogId, state.date);
+    if (booked.includes(slotId)) return;
 
     const currentAssignments = [...state.slotAssignments];
     const currentSlotIds = currentAssignments.map((a) => a.slotId);
-
-    const getBestPhotographerForSlotRange = (slotIds: string[]): string => {
-      // 1. If user arrived with initialPhotographerId and they are available for all slotIds
-      if (initialPhotographerId) {
-        const booked = getBookedSlots(initialPhotographerId, state.date);
-        if (slotIds.every((sId) => !booked.includes(sId))) {
-          return initialPhotographerId;
-        }
-      }
-
-      // 2. Check if Lead Photographer Arjun is free for ALL slotIds
-      const arjunBooked = getBookedSlots(MAIN_PHOTOGRAPHER.id, state.date);
-      if (slotIds.every((sId) => !arjunBooked.includes(sId))) {
-        return MAIN_PHOTOGRAPHER.id;
-      }
-
-      // 3. Check if any Associate Photographer is free for ALL slotIds
-      for (const photog of ASSOCIATE_PHOTOGRAPHERS) {
-        const photogBooked = getBookedSlots(photog.id, state.date);
-        if (slotIds.every((sId) => !photogBooked.includes(sId))) {
-          return photog.id;
-        }
-      }
-
-      // 4. Fallback: photographer with highest availability in these slots
-      let bestPhotog = MAIN_PHOTOGRAPHER.id;
-      let maxFree = -1;
-      for (const photog of STUDIO_PHOTOGRAPHERS) {
-        const photogBooked = getBookedSlots(photog.id, state.date);
-        const freeCount = slotIds.filter((sId) => !photogBooked.includes(sId)).length;
-        if (freeCount > maxFree) {
-          maxFree = freeCount;
-          bestPhotog = photog.id;
-        }
-      }
-      return bestPhotog;
-    };
-
     const baseHours = state.service?.slotsRequired || 4;
 
     // CASE 1: Nothing selected yet.
-    // Tapping a slot immediately selects baseHours (e.g. 4 continuous hours) starting at that slot!
+    // Tap a slot -> selects baseHours continuous slots starting at targetIdx
     if (currentAssignments.length === 0) {
       let start = targetIdx;
       if (start + baseHours > TIME_SLOTS.length) {
         start = Math.max(0, TIME_SLOTS.length - baseHours);
       }
       const targetSlotIds = TIME_SLOTS.slice(start, start + baseHours).map((s) => s.id);
-      const chosenPhotogId = getBestPhotographerForSlotRange(targetSlotIds);
-
-      const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => {
-        const isFree = !getBookedSlots(chosenPhotogId, state.date).includes(sId);
-        if (isFree) return { slotId: sId, photographerId: chosenPhotogId };
-        const fallback = STUDIO_PHOTOGRAPHERS.find(
-          (p) => !getBookedSlots(p.id, state.date).includes(sId),
-        );
-        return { slotId: sId, photographerId: fallback?.id || chosenPhotogId };
-      });
-
-      setState((prev) => ({ ...prev, slotAssignments: newSlots }));
-      return;
+      const isFullSliceFree = targetSlotIds.every((sId) => !booked.includes(sId));
+      if (isFullSliceFree) {
+        const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => ({
+          slotId: sId,
+          photographerId: activePhotogId,
+        }));
+        setState((prev) => ({ ...prev, selectedPhotographerId: activePhotogId, slotAssignments: newSlots }));
+        return;
+      } else {
+        // Consecutive free slots from targetIdx up to baseHours
+        const freeRun: string[] = [];
+        for (let i = targetIdx; i < Math.min(TIME_SLOTS.length, targetIdx + baseHours); i++) {
+          if (booked.includes(TIME_SLOTS[i].id)) break;
+          freeRun.push(TIME_SLOTS[i].id);
+        }
+        if (freeRun.length > 0) {
+          const newSlots: SlotAssignment[] = freeRun.map((sId) => ({
+            slotId: sId,
+            photographerId: activePhotogId,
+          }));
+          setState((prev) => ({ ...prev, selectedPhotographerId: activePhotogId, slotAssignments: newSlots }));
+          return;
+        }
+      }
     }
 
     const sortedCurrent = [...currentAssignments].sort((a, b) => {
@@ -1423,7 +1737,6 @@ export function BookingWizard({
         setState((prev) => ({ ...prev, slotAssignments: [] }));
         return;
       }
-      // If clicking the last slot, trim 1 hour
       if (targetIdx === maxIdx) {
         setState((prev) => ({
           ...prev,
@@ -1431,7 +1744,6 @@ export function BookingWizard({
         }));
         return;
       }
-      // If clicking the first slot, advance start by 1 hour
       if (targetIdx === minIdx) {
         setState((prev) => ({
           ...prev,
@@ -1439,7 +1751,6 @@ export function BookingWizard({
         }));
         return;
       }
-      // If clicking in the middle, trim down to that slot
       const trimmed = sortedCurrent.filter(
         (a) => TIME_SLOTS.findIndex((s) => s.id === a.slotId) <= targetIdx,
       );
@@ -1449,19 +1760,12 @@ export function BookingWizard({
 
     // CASE 3: Expanding by 1 hour (adjacent to the end)
     if (targetIdx === maxIdx + 1) {
-      const activePhotogId = sortedCurrent[0]?.photographerId || MAIN_PHOTOGRAPHER.id;
-      const isPhotogFree = !getBookedSlots(activePhotogId, state.date).includes(slotId);
-      const chosenPhotog = isPhotogFree
-        ? activePhotogId
-        : STUDIO_PHOTOGRAPHERS.find(
-            (p) => !getBookedSlots(p.id, state.date).includes(slotId),
-          )?.id || activePhotogId;
-
+      if (booked.includes(slotId)) return;
       setState((prev) => ({
         ...prev,
         slotAssignments: [
           ...sortedCurrent,
-          { slotId, photographerId: chosenPhotog },
+          { slotId, photographerId: activePhotogId },
         ],
       }));
       return;
@@ -1469,44 +1773,45 @@ export function BookingWizard({
 
     // CASE 4: Prepending by 1 hour (adjacent to the start)
     if (targetIdx === minIdx - 1) {
-      const activePhotogId = sortedCurrent[0]?.photographerId || MAIN_PHOTOGRAPHER.id;
-      const isPhotogFree = !getBookedSlots(activePhotogId, state.date).includes(slotId);
-      const chosenPhotog = isPhotogFree
-        ? activePhotogId
-        : STUDIO_PHOTOGRAPHERS.find(
-            (p) => !getBookedSlots(p.id, state.date).includes(slotId),
-          )?.id || activePhotogId;
-
+      if (booked.includes(slotId)) return;
       setState((prev) => ({
         ...prev,
         slotAssignments: [
-          { slotId, photographerId: chosenPhotog },
+          { slotId, photographerId: activePhotogId },
           ...sortedCurrent,
         ],
       }));
       return;
     }
 
-    // CASE 5: User clicked another starting time:
-    // Move the current session duration (e.g. 4 hours) to start at targetIdx
+    // CASE 5: Shift current session duration to start at targetIdx
     const targetHours = currentAssignments.length > 0 ? currentAssignments.length : baseHours;
     let start = targetIdx;
     if (start + targetHours > TIME_SLOTS.length) {
       start = Math.max(0, TIME_SLOTS.length - targetHours);
     }
     const targetSlotIds = TIME_SLOTS.slice(start, start + targetHours).map((s) => s.id);
-    const chosenPhotogId = getBestPhotographerForSlotRange(targetSlotIds);
-
-    const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => {
-      const isFree = !getBookedSlots(chosenPhotogId, state.date).includes(sId);
-      if (isFree) return { slotId: sId, photographerId: chosenPhotogId };
-      const fallback = STUDIO_PHOTOGRAPHERS.find(
-        (p) => !getBookedSlots(p.id, state.date).includes(sId),
-      );
-      return { slotId: sId, photographerId: fallback?.id || chosenPhotogId };
-    });
-
-    setState((prev) => ({ ...prev, slotAssignments: newSlots }));
+    const isSliceFree = targetSlotIds.every((sId) => !booked.includes(sId));
+    if (isSliceFree) {
+      const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => ({
+        slotId: sId,
+        photographerId: activePhotogId,
+      }));
+      setState((prev) => ({ ...prev, selectedPhotographerId: activePhotogId, slotAssignments: newSlots }));
+    } else {
+      const freeRun: string[] = [];
+      for (let i = targetIdx; i < Math.min(TIME_SLOTS.length, targetIdx + targetHours); i++) {
+        if (booked.includes(TIME_SLOTS[i].id)) break;
+        freeRun.push(TIME_SLOTS[i].id);
+      }
+      if (freeRun.length > 0) {
+        const newSlots: SlotAssignment[] = freeRun.map((sId) => ({
+          slotId: sId,
+          photographerId: activePhotogId,
+        }));
+        setState((prev) => ({ ...prev, selectedPhotographerId: activePhotogId, slotAssignments: newSlots }));
+      }
+    }
   };
 
   const handleToggleAddon = (addonId: string) => {
@@ -1521,45 +1826,9 @@ export function BookingWizard({
     });
   };
 
-  const handleChangeSlotPhotographer = (slotId: string, photographerId: string) => {
-    setState((prev) => ({
-      ...prev,
-      slotAssignments: prev.slotAssignments.map((a) =>
-        a.slotId === slotId ? { ...a, photographerId } : a,
-      ),
-    }));
-  };
-
-  const handleApplyPhotographerToAll = (photographerId: string) => {
-    setState((prev) => ({
-      ...prev,
-      slotAssignments: prev.slotAssignments.map((a) => {
-        const isFree = !getBookedSlots(photographerId, state.date).includes(a.slotId);
-        return isFree ? { ...a, photographerId } : a;
-      }),
-    }));
-  };
-
-  const handleSelectDuration = (hours: number) => {
-    const getBestPhotog = (slotIds: string[]): string => {
-      if (initialPhotographerId) {
-        const booked = getBookedSlots(initialPhotographerId, state.date);
-        if (slotIds.every((sId) => !booked.includes(sId))) {
-          return initialPhotographerId;
-        }
-      }
-      const arjunBooked = getBookedSlots(MAIN_PHOTOGRAPHER.id, state.date);
-      if (slotIds.every((sId) => !arjunBooked.includes(sId))) {
-        return MAIN_PHOTOGRAPHER.id;
-      }
-      for (const photog of ASSOCIATE_PHOTOGRAPHERS) {
-        const photogBooked = getBookedSlots(photog.id, state.date);
-        if (slotIds.every((sId) => !photogBooked.includes(sId))) {
-          return photog.id;
-        }
-      }
-      return MAIN_PHOTOGRAPHER.id;
-    };
+  const handleSelectDuration = (hours: number, photographerId?: string) => {
+    const activePhotogId = photographerId || state.selectedPhotographerId || MAIN_PHOTOGRAPHER.id;
+    const booked = getBookedSlots(activePhotogId, state.date);
 
     let startIdx = 0;
     if (state.slotAssignments.length > 0) {
@@ -1574,14 +1843,10 @@ export function BookingWizard({
         startIdx = Math.max(0, TIME_SLOTS.length - hours);
       }
     } else {
-      // Find first startIdx where hours continuous slots are available
+      // Find first startIdx where hours continuous slots are free for activePhotogId
       for (let i = 0; i <= TIME_SLOTS.length - hours; i++) {
         const slotSlice = TIME_SLOTS.slice(i, i + hours).map((s) => s.id);
-        const hasPhotog = STUDIO_PHOTOGRAPHERS.some((p) => {
-          const booked = getBookedSlots(p.id, state.date);
-          return slotSlice.every((sId) => !booked.includes(sId));
-        });
-        if (hasPhotog) {
+        if (slotSlice.every((sId) => !booked.includes(sId))) {
           startIdx = i;
           break;
         }
@@ -1589,18 +1854,12 @@ export function BookingWizard({
     }
 
     const targetSlotIds = TIME_SLOTS.slice(startIdx, startIdx + hours).map((s) => s.id);
-    const chosenPhotogId = getBestPhotog(targetSlotIds);
+    const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => ({
+      slotId: sId,
+      photographerId: activePhotogId,
+    }));
 
-    const newSlots: SlotAssignment[] = targetSlotIds.map((sId) => {
-      const isFree = !getBookedSlots(chosenPhotogId, state.date).includes(sId);
-      if (isFree) return { slotId: sId, photographerId: chosenPhotogId };
-      const fallback = STUDIO_PHOTOGRAPHERS.find(
-        (p) => !getBookedSlots(p.id, state.date).includes(sId),
-      );
-      return { slotId: sId, photographerId: fallback?.id || chosenPhotogId };
-    });
-
-    setState((prev) => ({ ...prev, slotAssignments: newSlots }));
+    setState((prev) => ({ ...prev, selectedPhotographerId: activePhotogId, slotAssignments: newSlots }));
   };
 
   const handleClearSlots = () => {
@@ -1752,7 +2011,7 @@ export function BookingWizard({
   return (
     <div className="w-full max-w-2xl mx-auto">
       {/* Step Progress Header */}
-      <div className="mb-6 sm:mb-8 px-2">
+      <div className="mb-4 sm:mb-8 px-1">
         <div className="flex items-center justify-between relative">
           {/* Background track: inset 16px (left-4 right-4) so it stops exactly at centers of step 1 & 4 */}
           <div className="absolute left-4 right-4 top-4 h-0.5 bg-[#E8E2D2] z-0" />
@@ -1785,7 +2044,7 @@ export function BookingWizard({
                     isDone
                       ? 'border-[#C59B27] bg-[#C59B27] text-[#1A1A1A] shadow-xs'
                       : isCurrent
-                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-xs'
+                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-xs ring-2 ring-[#C59B27]/30'
                       : 'border-[#D9D2C2] bg-white text-[#767471]'
                   }`}
                 >
@@ -1802,10 +2061,17 @@ export function BookingWizard({
             );
           })}
         </div>
+
+        {/* Mobile-only Step Badge */}
+        <div className="text-center sm:hidden mt-2.5">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#997316] bg-[#C59B27]/12 border border-[#C59B27]/30 px-3 py-0.5 rounded-full shadow-2xs">
+            Step {state.step} of 4: {steps[state.step - 1]}
+          </span>
+        </div>
       </div>
 
-      {/* Main Wizard Content Card */}
-      <div className="bg-white rounded-3xl border border-[#E8E2D2] p-5 sm:p-8 shadow-sm">
+      {/* Main Wizard Content Card: Mobile-first padding */}
+      <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E8E2D2] p-3.5 sm:p-8 shadow-xs sm:shadow-sm">
         {state.step === 1 && (
           <ServiceStep
             selected={state.service}
@@ -1827,9 +2093,9 @@ export function BookingWizard({
             date={state.date}
             service={state.service}
             slotAssignments={state.slotAssignments}
+            selectedPhotographerId={state.selectedPhotographerId || MAIN_PHOTOGRAPHER.id}
+            onSelectPhotographer={handleSelectPhotographer}
             onSlotClick={handleSlotClick}
-            onChangeSlotPhotographer={handleChangeSlotPhotographer}
-            onApplyPhotographerToAll={handleApplyPhotographerToAll}
             onSelectDuration={handleSelectDuration}
             onClearSlots={handleClearSlots}
           />
@@ -1854,12 +2120,12 @@ export function BookingWizard({
         )}
 
         {/* Step Navigation Bar */}
-        <div className="mt-8 flex items-center justify-between gap-3 border-t border-[#F0ECE1] pt-5">
+        <div className="mt-6 sm:mt-8 flex items-center justify-between gap-3 border-t border-[#F0ECE1] pt-4 sm:pt-5">
           {state.step > 1 ? (
             <button
               type="button"
               onClick={() => setState((p) => ({ ...p, step: (p.step - 1) as any }))}
-              className="flex items-center gap-2 rounded-xl border border-[#D9D2C2] bg-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#1A1A1A] hover:bg-[#F0ECE1] transition shadow-xs"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-[#D9D2C2] bg-white px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-[#1A1A1A] hover:bg-[#F0ECE1] active:scale-95 transition shadow-xs"
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
@@ -1867,7 +2133,7 @@ export function BookingWizard({
             <button
               type="button"
               onClick={() => router.push('/')}
-              className="flex items-center gap-2 rounded-xl border border-[#D9D2C2] bg-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#1A1A1A] hover:bg-[#F0ECE1] transition shadow-xs"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-[#D9D2C2] bg-white px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-[#1A1A1A] hover:bg-[#F0ECE1] active:scale-95 transition shadow-xs"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Home
             </button>
@@ -1878,7 +2144,7 @@ export function BookingWizard({
               type="button"
               disabled={!canProceed}
               onClick={() => setState((p) => ({ ...p, step: (p.step + 1) as any }))}
-              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs sm:text-sm font-bold transition shadow-xs ${
+              className={`flex items-center gap-2 rounded-xl px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition shadow-xs active:scale-95 ${
                 canProceed
                   ? 'bg-[#1A1A1A] text-white hover:bg-[#333]'
                   : 'bg-[#E8E2D2] text-[#767471] cursor-not-allowed'
@@ -1891,7 +2157,7 @@ export function BookingWizard({
               type="button"
               disabled={!canProceed || submitting}
               onClick={handleSubmit}
-              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs sm:text-sm font-bold transition shadow-xs ${
+              className={`flex items-center gap-2 rounded-xl px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition shadow-xs active:scale-95 ${
                 canProceed && !submitting
                   ? 'bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AF37]'
                   : 'bg-[#E8E2D2] text-[#767471] cursor-not-allowed'

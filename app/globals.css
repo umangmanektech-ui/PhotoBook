@@ -37,6 +37,21 @@ select:disabled {
 html {
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent iOS Safari auto-zoom on form inputs */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* Custom scrollbar */
@@ -54,4 +69,13 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #c59b27;
 }
+
+/* Ensure Next.js dev indicator portal does not cover mobile bottom navigation */
+[data-nextjs-toast],
+nextjs-portal,
+#nextjs-dev-tools,
+div[data-nextjs-dev-tools-button] {
+  display: none !important;
+}
+
 

@@ -64,8 +64,8 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
         onOpenAuth={() => openAuthModal({ mode: 'login' })}
       />
 
-      {/* Main content — padding-bottom on mobile so BottomNav never covers content */}
-      <main className="flex-1 pb-16 sm:pb-0">
+      {/* Main content — generous padding-bottom on mobile so BottomNav never covers content */}
+      <main className="flex-1 pb-24 sm:pb-0">
         {children}
       </main>
 
